@@ -167,7 +167,7 @@ const producto4 = Product.addProduct(new GestionDeProductos(
     "RPG", 
     "Launchers", 
     200, 
-    "http://dissidentarms.com/wp-content/uploads/2016/12/20210201_181025-scaled.jpg",
+    "https://static.wikia.nocookie.net/squad_gamepedia/images/9/9a/RPG-7_real_life.jpg/revision/latest?cb=20170116205104",
     "SS2001",
     5
 ));
@@ -187,9 +187,6 @@ const productiActualizar = {
 // console.log(Product.getProducts());
 
 // Product.deletePost(4);
-// console.log(Product.getProducts());
-
-// console.log(Product.getProducts());
 // console.log(Product.getProducts());
 
 // Product.updateProduct(1, productiActualizar);
