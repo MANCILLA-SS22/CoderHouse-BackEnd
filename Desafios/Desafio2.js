@@ -25,7 +25,6 @@ class ProductManager{
         let comprobacion = fs.existsSync(this.products);
         if (comprobacion) {
             try { //Recordar que el metodo contructor no puede ser asincrono, y por eso unicamente utilizamos el try-catch.
-                console.log("True");
                 this.res = fs.readFileSync(products, "utf-8"); //Leemos (y obtenemos) un array vacio justo cuando no hemos cargado ningun producto
                 this.res = JSON.parse(this.res); //Una vez cargado el producto, lo parseamos para poder obtenerlo el objeto proveniente del formato JSON.
             } catch (error) {
@@ -52,14 +51,25 @@ class ProductManager{
                 } */
                 this.res.length === 0 ? product.id = 1 : product.id = this.res.length + 1;
                 this.res.push(product);
-                await fs.promises.writeFile(this.products, JSON.stringify([...this.res, product], null, "\t"));
-                // return console.error("Product added successfully");
+                await this.saveFile(this.res);
+                return console.error("Product added successfully");
             }else{
                 return console.error("Product already in stock");
             }
 
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    async saveFile(data){
+        try {
+            console.log([...data])
+            await fs.promises.writeFile(this.products, JSON.stringify([...data], null, "\t"));
+            return true;
+        } catch (error) {
+            console.log(error)
+            return false;
         }
     }
 
@@ -130,12 +140,13 @@ class GestionDeProductos{
     }
 }
 
-const Product = new ProductManager("./products.txt");
+// Paso 1: Creamos un una nueva funcion y le asignamos el nombre del archi a crear en formato .json
+const Product = new ProductManager("./products.json");
 
-// Obtenemos el array vacio
+// Paso 2: Obtenemos el array vacio creado en la funcion
 // console.log(Product.getProducts());
 
-// Agregamos productos al arreglo vacio
+// Paso 3: Agregamos productos al arreglo vacio en la funcion addProduct
 const producto1 = Product.addProduct(new GestionDeProductos(
     "AK-47", 
     "Assault riffle", 
@@ -181,13 +192,16 @@ const productiActualizar = {
     stock: 10 
 }
 
+// Paso 4: Obtenemos el array con todos los productos seleccionados
 // console.log(Product.getProducts());
 
+// Paso 5: Recuperamos un elemento con base en su id.
 // console.log(Product.getProductById(3));
-// console.log(Product.getProducts());
 
+// Paso 6: Eliminamos un producto del array con base en su id y nuevamente mostramos el array modificado en consola
 // Product.deletePost(4);
 // console.log(Product.getProducts());
 
+// Paso 7: Modificamos uno de los elementos agregados con nueva informacion en sus campos, y tambien le pasamos el id del elemento a modificar.
 // Product.updateProduct(1, productiActualizar);
 // console.log(Product.getProducts());
