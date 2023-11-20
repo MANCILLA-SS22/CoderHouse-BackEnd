@@ -1,15 +1,5 @@
 [
 	{
-		"title": "AK-47",
-		"description": "Assault riffle",
-		"price": 550,
-		"thumbnail": "https://www.therange702.com/wp-content/uploads/2021/09/AK47-768x513-1.jpg.webp",
-		"code": "SS1998",
-		"stock": 5,
-		"status": true,
-		"id": 1
-	},
-	{
 		"title": "P-90",
 		"description": "Sub machine gun",
 		"price": 330,
@@ -100,13 +90,13 @@
 		"id": 10
 	},
 	{
-		"title": "PP-19",
-		"description": "Sub machine gun",
-		"price": 730,
-		"thumbnail": "https://static.wikia.nocookie.net/thedivision/images/7/74/PP-19_Div2.png/revision/latest/scale-to-width-down/1000?cb=20201217161605",
-		"code": "SS2008",
-		"stock": 14,
+		"title": "AK-47",
+		"description": "Assault riffle",
+		"price": 550,
+		"thumbnail": "https://www.therange702.com/wp-content/uploads/2021/09/AK47-768x513-1.jpg.webp",
+		"code": "SS1998",
+		"stock": 5,
 		"status": true,
-		"id": 11
+		"id": 10
 	}
 ]

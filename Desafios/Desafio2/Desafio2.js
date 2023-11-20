@@ -15,7 +15,7 @@
 //  ✓ Debe tener un método updateProduct, el cual debe recibir el id del producto a actualizar, así también como el campo a actualizar (puede ser el objeto completo, como en una DB), y debe actualizar el producto que tenga ese id en el archivo. NO DEBE BORRARSE SU ID
 //  ✓ Debe tener un método deleteProduct, el cual debe recibir un id y debe eliminar el producto que tenga ese id en el archivo.
 
-const fs = require("fs");
+import fs from 'fs';
 
 class ProductManager{
     constructor(products){ // ./products.txt
@@ -199,8 +199,8 @@ const productiActualizar = {
 // console.log(Product.getProductById(3));
 
 // Paso 6: Eliminamos un producto del array con base en su id y nuevamente mostramos el array modificado en consola
-// Product.deletePost(4);
-// console.log(Product.getProducts());
+Product.deletePost(4);
+console.log(Product.getProducts());
 
 // Paso 7: Modificamos uno de los elementos agregados con nueva informacion en sus campos, y tambien le pasamos el id del elemento a modificar.
 // Product.updateProduct(1, productiActualizar);

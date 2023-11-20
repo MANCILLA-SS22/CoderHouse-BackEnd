@@ -1,11 +1,11 @@
 [
 	{
-		"title": "new title",
-		"description": "new description",
-		"price": 1000,
-		"thumbnail": "new url image",
-		"code": "new code",
-		"stock": 10,
+		"title": "AK-47",
+		"description": "Assault riffle",
+		"price": 9,
+		"thumbnail": "https://www.therange702.com/wp-content/uploads/2021/09/AK47-768x513-1.jpg.webp",
+		"code": "SS1998",
+		"stock": 5,
 		"id": 1
 	},
 	{
@@ -25,14 +25,5 @@
 		"code": "SS2000",
 		"stock": 5,
 		"id": 3
-	},
-	{
-		"title": "RPG",
-		"description": "Launchers",
-		"price": 200,
-		"thumbnail": "https://static.wikia.nocookie.net/squad_gamepedia/images/9/9a/RPG-7_real_life.jpg/revision/latest?cb=20170116205104",
-		"code": "SS2001",
-		"stock": 5,
-		"id": 4
 	}
 ]

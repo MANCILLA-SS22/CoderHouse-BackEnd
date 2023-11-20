@@ -25,10 +25,10 @@ export default class ProductManager{
                 this.res.length === 0 ? product.id = 1 : product.id = this.res.length + 1;
                 this.res.push(product);
                 await this.saveFile(this.res);
-                return console.error("Product added successfully");
-            }else{
-                return console.error("Product already in stock");
-            }
+                //return console.error("Product added successfully");
+            }//else{
+                //return console.error("Product already in stock");
+            //}
 
         } catch (error) {
             console.log(error);
@@ -37,7 +37,6 @@ export default class ProductManager{
 
     async saveFile(data){
         try {
-            console.log([...data])
             await fs.promises.writeFile(this.products, JSON.stringify([...data], null, "\t"));
             return true;
         } catch (error) {
@@ -48,14 +47,14 @@ export default class ProductManager{
 
     async deletePost(id) {
         try {
-            const post = this.res.find((p) => p.id === id); console.log(post)
+            const jsonData = await this.getProducts();
+            const post = Object.values(jsonData).find((p) => p.id === id);
             if(post){
                 const deleteById = this.res.filter(event => event.id !== id);
-                console.log("Nuevi array", deleteById)
                 await fs.promises.writeFile(this.products, JSON.stringify(deleteById, null, "\t"));
-                return console.log("Removed product successfully");
+                return deleteById;
             }else{
-                return console.log("El post no existe");
+                return "0";
             }
 
         } catch (error) {
@@ -230,19 +229,3 @@ const productiActualizar = {
     stock: 10,
     status: true
 }
-
-// module.exports = {ProductManager} //Utilizamos esta linea de codigo en caso de no querer utilizar    "type": "module"   en el package.json.
-
-// Paso 4: Obtenemos el array con todos los productos seleccionados
-// console.log(Product.getProducts());
-
-// Paso 5: Recuperamos un elemento con base en su id.
-// console.log(Product.getProductById(3));
-
-// Paso 6: Eliminamos un producto del array con base en su id y nuevamente mostramos el array modificado en consola
-// Product.deletePost(4);
-// console.log(Product.getProducts());
-
-// Paso 7: Modificamos uno de los elementos agregados con nueva informacion en sus campos, y tambien le pasamos el id del elemento a modificar.
-// Product.updateProduct(1, productiActualizar);
-// console.log(Product.getProducts());
