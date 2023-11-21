@@ -55,8 +55,7 @@ routerCarts.post("/:cartId/products/:productId", async function(request, respons
         if (!getProductId){
             response.status(404).json({message: "Not found product id."});
         }else{
-            const verificarCartProduct = getCartId.products.find(event => event.id === undefined); console.log("3", verificarCartProduct);
-            
+            const verificarCartProduct = getCartId.products.find(event => event.product === +productId); console.log("3", getCartId.products);            
             if (verificarCartProduct === undefined){
                 const newObject = {
                     product: +productId,
