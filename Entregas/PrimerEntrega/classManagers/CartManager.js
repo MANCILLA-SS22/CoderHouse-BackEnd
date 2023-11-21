@@ -26,12 +26,10 @@ export default class CartManager{
                 // this.res.push(cart);
             } else {
                 if (this.res[this.res.length - 1].id == this.res.length) {
-                    console.log("first");
                     cart.id = this.res.length + 1;
                     cart.products = [];
                 }
                 else {
-                    console.log("second");
                     cart.id = this.res[this.res.length - 1].id + 1;
                     cart.products = [];
                 }
@@ -102,8 +100,8 @@ export default class CartManager{
             const jsonData = this.res;
             const itemId = Object.values(jsonData).find((e) => e.id === id);
             itemId.products = array; //Esto sirve para actualizar el array
-            await fs.promises.writeFile(this.cart, JSON.stringify(jsonData, null, "\n"));
-            return "cart products updated" 
+            await fs.promises.writeFile(this.cart, JSON.stringify(jsonData, null, "\t"));
+            return itemId.products;
         }
         catch (error) {
             return error;

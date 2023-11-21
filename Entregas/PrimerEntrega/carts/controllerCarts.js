@@ -42,10 +42,10 @@ routerCarts.get("/:id", function(request, response){
 
 //http://localhost:5500/api/carts/2/products/1
 routerCarts.post("/:cartId/products/:productId", async function(request, response){
-    const {cartId} = request.params; console.log(cartId);
-    const {productId} = request.params; console.log(productId);
-    const getCartId = CartJSON.getCartById(+cartId); console.log(getCartId);
-    const getProductId = ProductJSON.getProductById(+productId); console.log(getProductId);
+    const {cartId} = request.params;
+    const {productId} = request.params;
+    const getCartId = CartJSON.getCartById(+cartId); console.log("1", getCartId);
+    const getProductId = ProductJSON.getProductById(+productId); console.log("2", getProductId);
 
     console.log();
     
@@ -55,30 +55,25 @@ routerCarts.post("/:cartId/products/:productId", async function(request, respons
         if (!getProductId){
             response.status(404).json({message: "Not found product id."});
         }else{
-            const verificarCartProduct = getCartId.products.find(event => event.id === undefined);
+            const verificarCartProduct = getCartId.products.find(event => event.id === undefined); console.log("3", verificarCartProduct);
+            
             if (verificarCartProduct === undefined){
                 const newObject = {
                     product: +productId,
                     quantity: 1
                 }
-                getCartId.products.push(newObject);
+                getCartId.products.push(/* getProductId, */ newObject);
                 const updateCartProducts = await CartJSON.updateCartProductsId(+cartId, getCartId.products);
                 response.status(200).json(updateCartProducts);
-            }else {
+            }else{
                 let newObject = getCartId.products;                
                 const productsArrayPosition = getCartId.products.findIndex(event => event.product === +productId);
                 newObject[productsArrayPosition].quantity = newObject[productsArrayPosition].quantity+1;
                 const updateCartProducts = await CartJSON.updateCartProductsId(+cartId, newObject);
                 response.status(200).json(updateCartProducts);
-                // response.status(404).json({message: "error"});
             }
         }
     }
-
-    
-
-
-
 });
 
 export default routerCarts;
