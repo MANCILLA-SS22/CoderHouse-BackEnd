@@ -60,7 +60,7 @@ import morgan from "morgan";
 import routerMain from "./router/main.js";
 
 
-const PORT = 8080;
+const PORT = 5500;
 const app = express();
 
 app.use(express.json());

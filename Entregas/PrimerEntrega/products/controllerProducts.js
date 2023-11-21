@@ -2,7 +2,7 @@ import { Router } from "express";
 import ProductManager from "../classManagers/ProductManager.js";
 
 const routerProducts = Router();
-const Product = new ProductManager("./products.json");
+const Product = new ProductManager("./data/products.json");
 
 routerProducts.get("/", async function(request, response){
     const allProducts = await Product.getProducts();
@@ -75,7 +75,7 @@ routerProducts.put("/:id", async function(request, response){
 
 routerProducts.delete("/:id", async function(request, response){
     const {id} = request.params;
-    const deleteProduct = await Product.deletePost(+id);
+    const deleteProduct = await Product.deleteProduct(+id);
     console.log("Array actualizado", deleteProduct);
 
     if(deleteProduct === "0"){

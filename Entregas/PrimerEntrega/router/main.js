@@ -1,4 +1,5 @@
-import routerProducts from "../products/controllerProducts.js"
+import routerProducts from "../products/controllerProducts.js";
+import routerCarts from "../carts/controllerCarts.js";
 
 function routerMain(app){
 
@@ -7,7 +8,7 @@ function routerMain(app){
     });
 
     app.use("/api/products/", routerProducts);
-    // app.use("/api/carts", controllerCarts);
+    app.use("/api/carts", routerCarts);
 }
 
 export default routerMain;
