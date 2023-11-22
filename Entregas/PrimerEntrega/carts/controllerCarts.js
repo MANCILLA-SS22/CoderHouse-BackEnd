@@ -60,7 +60,7 @@ routerCarts.post("/:cartId/products/:productId", async function(request, respons
                     product: +productId,
                     quantity: 1
                 }
-                cartIdProducts.push(/* getProductId, */ newObject);
+                cartIdProducts.push(getProductId, newObject);
                 const updateCartProducts = await CartJSON.updateCartProductsId(+cartId, cartIdProducts);
                 response.status(200).json(updateCartProducts);
             }else{

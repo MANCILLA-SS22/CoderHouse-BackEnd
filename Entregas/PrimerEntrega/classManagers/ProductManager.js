@@ -100,7 +100,7 @@ export default class ProductManager{
     }
 }
 
-
+// AQUI SE ENCUENTRAN LOS OBJETOS PARA REALIZAR PRUEBAS EN POSTMAN
 /* [
     {
         "title": "Saiga-12", 
