@@ -20,19 +20,22 @@ export default class CartManager{
 
     async addCart(cart){
         try {
+            console.log("1 --> ", this.res.length)
             if (this.res.length === 0) {
                 cart.id = 1;
                 cart.products = [];
-                // this.res.push(cart);
             } else {
-                if (this.res[this.res.length - 1].id == this.res.length) {
-                    cart.id = this.res.length + 1;
-                    cart.products = [];
-                }
-                else {
-                    cart.id = this.res[this.res.length - 1].id + 1;
-                    cart.products = [];
-                }
+                cart.id = this.res.length + 1;
+                cart.products = [];
+                // if (this.res[this.res.length - 1].id === this.res.length){
+                //     console.log("2 --> ", this.res[this.res.length - 1].id);
+                //     cart.id = this.res.length + 1;
+                //     cart.products = [];
+                // }
+                // else {
+                //     cart.id = this.res[this.res.length - 1].id + 1;
+                //     cart.products = [];
+                // }
             }
             await this.saveFile(this.res, cart);
         } catch (error) {
@@ -98,7 +101,7 @@ export default class CartManager{
     async updateCartProductsId(id, array) {
         try {
             const jsonData = this.res;
-            const itemId = Object.values(jsonData).find((e) => e.id === id);
+            const itemId = Object.values(jsonData).find((event) => event.id === id);
             itemId.products = array; //Esto sirve para actualizar el array
             await fs.promises.writeFile(this.cart, JSON.stringify(jsonData, null, "\t"));
             return itemId.products;

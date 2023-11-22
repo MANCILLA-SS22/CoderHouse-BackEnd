@@ -46,29 +46,28 @@ routerCarts.post("/:cartId/products/:productId", async function(request, respons
     const {productId} = request.params;
     const getCartId = CartJSON.getCartById(+cartId); console.log("1", getCartId);
     const getProductId = ProductJSON.getProductById(+productId); console.log("2", getProductId);
+    let cartIdProducts = getCartId?.products;
 
-    console.log();
-    
     if (!getCartId){
         response.status(404).json({message: "Not found cart id."});
     }else{
         if (!getProductId){
             response.status(404).json({message: "Not found product id."});
         }else{
-            const verificarCartProduct = getCartId.products.find(event => event.product === +productId); console.log("3", getCartId.products);            
+            const verificarCartProduct = cartIdProducts.find(event => event.product === +productId); console.log("3", cartIdProducts);            
             if (verificarCartProduct === undefined){
                 const newObject = {
                     product: +productId,
                     quantity: 1
                 }
-                getCartId.products.push(/* getProductId, */ newObject);
-                const updateCartProducts = await CartJSON.updateCartProductsId(+cartId, getCartId.products);
+                cartIdProducts.push(/* getProductId, */ newObject);
+                const updateCartProducts = await CartJSON.updateCartProductsId(+cartId, cartIdProducts);
                 response.status(200).json(updateCartProducts);
             }else{
-                let newObject = getCartId.products;                
-                const productsArrayPosition = getCartId.products.findIndex(event => event.product === +productId);
-                newObject[productsArrayPosition].quantity = newObject[productsArrayPosition].quantity+1;
-                const updateCartProducts = await CartJSON.updateCartProductsId(+cartId, newObject);
+                const productsArrayPosition = cartIdProducts.findIndex(event => event.product === +productId);
+                cartIdProducts[productsArrayPosition].quantity += 1;
+
+                const updateCartProducts = await CartJSON.updateCartProductsId(+cartId, cartIdProducts);
                 response.status(200).json(updateCartProducts);
             }
         }
