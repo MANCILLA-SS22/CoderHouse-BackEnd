@@ -20,6 +20,9 @@
   "homepage": "https://github.com/MANCILLA-SS22/CoderHouse-BackEnd#readme",
   "dependencies": {
     "express": "^4.18.2",
-    "morgan": "^1.10.0"
+    "express-handlebars": "^7.1.2",
+    "handlebars": "^4.7.8",
+    "morgan": "^1.10.0",
+    "socket.io": "^4.7.2"
   }
 }

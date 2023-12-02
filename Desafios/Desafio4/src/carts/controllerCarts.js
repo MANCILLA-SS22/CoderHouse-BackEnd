@@ -1,11 +1,11 @@
-import { Router, query } from "express";
+import { Router } from "express";
 import CartManager from "../classManagers/CartManager.js";
 import ProductManager from "../classManagers/ProductManager.js";
 
 const routerCarts = Router();
 
-const ProductJSON = new ProductManager("./data/products.json");
-const CartJSON = new CartManager("./data/carts.json");
+const ProductJSON = new ProductManager("src/data/products.json");
+const CartJSON = new CartManager("src/data/carts.json");
 
 routerCarts.get("/", async function(request, response){
     const allCarts = await CartJSON.getCart();
