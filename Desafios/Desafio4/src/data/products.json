@@ -1,25 +1,5 @@
 [
 	{
-		"title": "RPG",
-		"description": "Launchers",
-		"price": 1000,
-		"thumbnail": "https://static.wikia.nocookie.net/squad_gamepedia/images/9/9a/RPG-7_real_life.jpg/revision/latest?cb=20170116205104",
-		"code": "SS2001",
-		"stock": 5,
-		"status": true,
-		"id": 1
-	},
-	{
-		"title": "AA-12",
-		"description": "Shotgun",
-		"price": 3000,
-		"thumbnail": "https://static.wikia.nocookie.net/squad_gamepedia/images/9/9a/RPG-7_real_life.jpg/revision/latest?cb=20170116205104",
-		"code": "SS2002",
-		"stock": 8,
-		"status": true,
-		"id": 2
-	},
-	{
 		"title": "Saiga-12",
 		"description": "Shotgun",
 		"price": 800,
@@ -27,6 +7,6 @@
 		"code": "SS2000",
 		"stock": 1,
 		"status": true,
-		"id": 3
+		"id": 2
 	}
 ]

@@ -11,12 +11,14 @@ routerProducts.get("/", async function(request, response){
     let data;
     if (limit) {
         // response.json(Object.values(allProducts).slice(0, limit)); //No se deben utilizar mas de un response, especificamente de (json, send, redirect o render);
+
         data = Object.values(allProducts).slice(0, limit);
-        response.render("home", {data})
+        response.render("home", {data});
     }else{
         // response.json(allProducts); //No se deben utilizar mas de un response, especificamente de (json, send, redirect o render);
+
         data = allProducts
-        response.render("home", {data})
+        response.render("home", {data});
     }
 });
 
@@ -56,9 +58,9 @@ routerProducts.post("/", async function(request, response){
             return;
         }
 
-        global.io.emit("productList", crearProducto);
+        // global.io.emit("productList", crearProducto);
 
-        response.status(200).json({message: crearProducto});
+        response.status(200).json({message: {crearProducto}});
     }else{
         response.status(404).json({message: "Not enough information."});
     }
@@ -86,7 +88,7 @@ routerProducts.put("/:id", async function(request, response){
             const actualizarProducto = await Product.updateProduct(+id, nuevoProducto);
 
             // const allProducts = await Product.addProduct();
-            global.io.emit("productList", actualizarProducto);
+            // global.io.emit("productList", actualizarProducto);
 
             response.status(200).json({message: actualizarProducto});
         }else{
@@ -104,9 +106,9 @@ routerProducts.delete("/:id", async function(request, response){
         response.status(404).json("res 1");
     }
     else{
-        // const allProducts = await Product.addProduct();
-        global.io.emit("productList", deleteProduct);
-        response.status(200).json({"Message": deleteProduct});
+        // global.io.emit("productList", deleteProduct);
+        response.render("home", {deleteProduct});
+        // response.status(200).json({"Message": deleteProduct});
     }
 });
 
