@@ -10,6 +10,7 @@ router.get("/", function(request, response){
 
 router.post("/res", (request, response) => {
     const {title, description, price, thumbnail, code, stock} = request.body;
+    const product = [];
     product.push({title, description, price, thumbnail, code, stock});
 });
 

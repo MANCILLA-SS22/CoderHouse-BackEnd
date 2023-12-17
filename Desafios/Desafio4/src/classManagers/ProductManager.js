@@ -22,16 +22,6 @@ export default class ProductManager{
         try {
             const verifyExistence = this.res.some((e) => e.code === product.code); //Verificamos que el codigo de cada producto sea igual. Si son iguales, entonces el producto ya existe y no es necesario agreagarlo
             if (!verifyExistence){
-                /* if (this.res.length === 0) {
-                    product.id = this.res.length+1;
-                }else{
-                    if(this.res[this.res.length-1].id === this.res.length){
-                        product.id = this.res.length + 1;
-                    } 
-                    else{
-                        product.id = this.res[this.res.length-1].id+1;
-                    }
-                } */
                 this.res.length === 0 ? product.id = 1 : product.id = this.res.length + 1;
                 this.res.push(product);
                 await this.saveFile(this.res);

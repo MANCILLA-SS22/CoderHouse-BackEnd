@@ -1,6 +1,6 @@
 import express from "express";
 import handlebars from "express-handlebars";
-import {__dirname} from "../../utils.js";
+import {__dirname} from "../utils.js";
 import routerCarts from "./controllerCarts.js";
 import routerProducts from "./controllerProducts.js";
 import realTimeProductsController from "../router/controllerRealProducts.js";
@@ -13,12 +13,12 @@ function routerMain(app){
         })
     );
 
-    app.set("views", `${__dirname}/src/view`); // Seteamos nuestro motor. Con app.set("views", ruta) indicamos en que parte del proyecto estaran las vistas. Recordar utilizar rutas absolutas para evitar asuntos de ruteo relativo.
+    app.set("views", `${__dirname}/view`); // Seteamos nuestro motor. Con app.set("views", ruta) indicamos en que parte del proyecto estaran las vistas. Recordar utilizar rutas absolutas para evitar asuntos de ruteo relativo.
     app.set("view engine", "hbs"); //Finalmente, con este app.set() indicamos que, el motor que ya inicializamos arriba, es el que queremos utilizar. Es importante saber que, cuando digamos al servidor que renderice, sepa que tiene que hacerlo con el motor de hbs.
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    app.use(express.static(`${__dirname}/src/public`)); // Public. Sentamos de manera estatica la carpeta public
-    app.get("/", function(request, response){response.render("index", {title: "Ejercicio",name: "German",fileCss: "styles.css"})});
+    app.use(express.static(`${__dirname}/public`)); // Public. Sentamos de manera estatica la carpeta public
+    app.get("/", function(request, response){response.render("home", {title: "Ejercicio",name: "German",fileCss: "styles.css"})});
     app.use("/api/carts", routerCarts);
     app.use("/api/products", routerProducts);
     app.use("/realTimeProduct", realTimeProductsController);
