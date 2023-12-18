@@ -2,24 +2,15 @@ import { Router } from "express";
 import ProductManager from "../classManagers/ProductManager.js";
 
 const routerProducts = Router();
-const Product = new ProductManager("src/data/products.json");
+const Product = new ProductManager("./data/products.json");
 
 //https://stackoverflow.com/questions/7042340/error-cant-set-headers-after-they-are-sent-to-the-client#:~:text=The%20error%20"Error%3A%20Can%27,body%20has%20already%20been%20written.
-routerProducts.get("/", async function(request, response){
+routerProducts.get("/", async function(request, response){ //No se deben utilizar mas de un response, especificamente de (json, send, redirect o render);
     const allProducts = await Product.getProducts();
     const {limit} = request.query;
     let data;
-    if (limit) {
-        // response.json(Object.values(allProducts).slice(0, limit)); //No se deben utilizar mas de un response, especificamente de (json, send, redirect o render);
-
-        data = Object.values(allProducts).slice(0, limit);
-        response.render("home", {data});
-    }else{
-        // response.json(allProducts); //No se deben utilizar mas de un response, especificamente de (json, send, redirect o render);
-
-        data = allProducts
-        response.render("home", {data});
-    }
+    
+    limit ? response.json(Object.values(allProducts).slice(0, limit)) :  response.json(allProducts);
 });
 
 routerProducts.get("/:id", async function(request, response){
@@ -103,12 +94,11 @@ routerProducts.delete("/:id", async function(request, response){
     console.log("Array actualizado", deleteProduct);
 
     if(deleteProduct === "0"){
-        response.status(404).json("res 1");
+        response.status(404).json("Product not found");
     }
     else{
         // global.io.emit("productList", deleteProduct);
-        response.render("home", {deleteProduct});
-        // response.status(200).json({"Message": deleteProduct});
+        response.status(200).json({"Message": deleteProduct});
     }
 });
 

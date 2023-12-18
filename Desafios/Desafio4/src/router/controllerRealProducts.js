@@ -2,10 +2,7 @@ import { Router } from "express";
 const router = Router();
 
 router.get("/", function(request, response){
-    response.render("realTimeProducts", {
-        title: "Form example",
-        fileCss: "styles.css",
-    });
+    response.render("realTimeProducts", {title: "Form example",fileCss: "styles.css"})
 });
 
 router.post("/res", (request, response) => {

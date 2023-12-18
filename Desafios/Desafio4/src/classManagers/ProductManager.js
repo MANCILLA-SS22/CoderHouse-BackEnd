@@ -110,7 +110,7 @@ export default class ProductManager{
         "code": "SS2000",
         "stock": 1,
         "status": true
-    },
+    }
     {   
         "title": "RPG", 
         "description": "Launchers", 
@@ -119,7 +119,7 @@ export default class ProductManager{
         "code": "SS2001",
         "stock": 5,
         "status": true
-    },
+    }
     {   
         "title": "AA-12", 
         "description": "Shotgun", 
@@ -128,7 +128,7 @@ export default class ProductManager{
         "code": "SS2002",
         "stock": 8,
         "status": true
-    },
+    }
     {
         "title": "Barret .50 cal", 
         "description": "Sniper", 
@@ -137,7 +137,7 @@ export default class ProductManager{
         "code": "SS2003",
         "stock": 3,
         "status": true
-    },
+    }
     {   
         "title": "AK-12", 
         "description": "Assault riffle", 
@@ -146,7 +146,7 @@ export default class ProductManager{
         "code": "SS2004",
         "stock": 8,
         "status": true
-    },
+    }
     {
         "title": "MP7", 
         "description": "Sub machine gun", 
@@ -155,7 +155,7 @@ export default class ProductManager{
         "code": "SS2005",
         "stock": 10,
         "status": true
-    },
+    }
     {
         "title": "G36c", 
         "description": "Launchers", 
@@ -164,7 +164,7 @@ export default class ProductManager{
         "code": "SS2006",
         "stock": 9,
         "status": true
-    },
+    }
     {
         "title": "VEPR-12", 
         "description": "Shotgun", 

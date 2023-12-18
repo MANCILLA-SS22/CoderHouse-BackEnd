@@ -3,7 +3,8 @@ import handlebars from "express-handlebars";
 import {__dirname} from "../utils.js";
 import routerCarts from "./controllerCarts.js";
 import routerProducts from "./controllerProducts.js";
-import realTimeProductsController from "../router/controllerRealProducts.js";
+import controllerViews from "./controllerViews.js"
+import realTimeProductsController from "./controllerRealProducts.js";
 
 function routerMain(app){
 
@@ -18,7 +19,8 @@ function routerMain(app){
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(express.static(`${__dirname}/public`)); // Public. Sentamos de manera estatica la carpeta public
-    app.get("/", function(request, response){response.render("home", {title: "Ejercicio",name: "German",fileCss: "styles.css"})});
+
+    app.use(controllerViews)
     app.use("/api/carts", routerCarts);
     app.use("/api/products", routerProducts);
     app.use("/realTimeProduct", realTimeProductsController);
