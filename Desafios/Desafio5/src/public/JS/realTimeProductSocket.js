@@ -10,6 +10,7 @@ button.addEventListener("click", function(e){
     const thumbnail = document.querySelector("#thumbnail");
     const code = document.querySelector("#code");
     const stock = document.querySelector("#stock");
+    const status = document.querySelector("#status");
 
     const product = {
         title: title.value,
@@ -17,7 +18,8 @@ button.addEventListener("click", function(e){
         price: price.value,
         thumbnail: thumbnail.value,
         code: code.value,
-        stock: stock.value
+        stock: stock.value,
+        status: status.value
     };
 
     socket.emit("product_form", product);
@@ -32,36 +34,8 @@ socket.on("product_list", function(data){
                 <p>price${e.price}</p>
                 <p>thumbnail${e.thumbnail}</p>
                 <p>code${e.code}</p>
-                <p>stock${e.stock}</p>`
+                <p>stock${e.stock}</p>
+                <p>status${e.status}</p>`
         }
     );
 });
-
-// const newProducts = document.getElementById("newProducts");
-// const currentProduct = document.getElementById("currentProduct");
-
-// socket.on("productList", function(data){
-//     currentProduct.innerHTML = "";
-//     let render = data.map(function(event){
-//         let ans = (
-//             `<div class="product-render">
-//                 <span>
-//                     <h2>${event.title}</h2>
-//                     <p>description: ${event.description}</p>
-//                     <p>price: ${event.price}</p>
-//                     <p>thumbnail: ${event.thumbnail}</p>
-//                     <p>code: ${event.code}</p>
-//                     <p>stock: ${event.stock}</p>
-//                     <p>status: ${event.status}</p>
-//                     <p>id: ${event.id}</p>
-//                 </span>
-//             </div>`
-//         );
-
-//         return ans;
-//     });
-
-//     newProducts.innerHTML = render;
-// }); 
-
-

@@ -1,13 +1,10 @@
 import express from "express";
 import handlebars from "express-handlebars";
 import {__dirname} from "../utils.js";
-
 import routerCarts from "./controllerCarts.js";
 import routerProducts from "./controllerProducts.js";
-
 import routerCartsFs from "./controllerCarts.fs.js";
 import routerProductsFs from "./controllerProducts.fs.js";
-
 import controllerViews from "../router/controllerViews.js"
 import realTimeProductsController from "../router/controllerRealProducts.js";
 
@@ -26,13 +23,10 @@ function routerMain(app){
     app.use(express.static(`${__dirname}/public`)); // Public. Sentamos de manera estatica la carpeta public
     app.get("/", function(request, response){response.render("index", {title: "Ejercicio",name: "German",fileCss: "styles.css"})});
     app.use(controllerViews);
-
     app.use("/api/carts", routerCarts);
     app.use("/api/products", routerProducts);    
-
     app.use("/api/fs/carts", routerCartsFs);
     app.use("/api/fs/products", routerProductsFs);
-
     app.use("/realTimeProduct", realTimeProductsController);
 }
 

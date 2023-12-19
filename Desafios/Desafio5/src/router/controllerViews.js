@@ -3,6 +3,7 @@ const router = Router();
 
 import {ProductManager} from "../dao/mongoClassManager/ProductManager.js";
 const Product = new ProductManager();
+const allProducts = Product.getProducts();
 
 router.get("/api/products", async function(request, response){
     try {
@@ -15,7 +16,11 @@ router.get("/api/products", async function(request, response){
 });
 
 router.get("/realTimeProduct", function(request, response){
-    response.render("realTimeProducts", {title: "Form example",fileCss: "styles.css"})
+    response.render("realTimeProducts", {title: "Form example",fileCss: "styles.css", allProducts})
+});
+
+router.get("/chat", function(request, response){
+    response.render("chat")
 });
 
 export default router;
