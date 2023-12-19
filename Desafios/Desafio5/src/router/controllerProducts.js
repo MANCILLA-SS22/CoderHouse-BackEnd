@@ -1,41 +1,23 @@
 import { Router } from "express";
-import ProductManager from "../classManagers/ProductManager.js";
-
 const routerProducts = Router();
-const Product = new ProductManager("./data/products.json");
 
-//https://stackoverflow.com/questions/7042340/error-cant-set-headers-after-they-are-sent-to-the-client#:~:text=The%20error%20"Error%3A%20Can%27,body%20has%20already%20been%20written.
-routerProducts.get("/", async function(request, response){
-    const allProducts = await Product.getProducts();
-    const {limit} = request.query;
-    let data;
-    limit ? response.json(Object.values(allProducts).slice(0, limit)) : response.json(allProducts);
-});
+import {ProductManager} from "../dao/mongoClassManager/ProductManager.js";
+const Product = new ProductManager();
 
 routerProducts.get("/:id", async function(request, response){
-    const {id} = request.params;
-    const allProducts = await Product.getProducts();
-
-    const maxValue = Object.values(allProducts).length;
-    if (+id < +maxValue && +id > 0) {
-        const getProductId = Product.getProductById(+id);
-        response.status(200).json({message: getProductId});
-    } else {
-        response.status(404).json({message: "User not found"});
+    try {
+        const {id} = request.params;
+        const getById = await Product.getProductById(id);
+        response.status(200).json({getById, message: "User found"});
+    } catch (error) {
+        response.status(404).json({message: "User NOT found", error});
     }
+    
 });
 
 routerProducts.post("/", async function(request, response){
     const {title, description, price, thumbnail, code, stock, status} = request.body;
-    const nuevoProducto = {
-        title: title,
-        description: description,
-        price: price,
-        thumbnail: thumbnail,
-        code: code,
-        stock: stock,
-        status: status
-    }
+    const nuevoProducto = {title: title,description: description,price: price,thumbnail: thumbnail,code: code,stock: stock,status: status}
 
     // const verifyExistenceUndefined = Object.values(nuevoProducto).indexOf(undefined);
     const parametersExist = nuevoProducto.hasOwnProperty("title") && nuevoProducto.hasOwnProperty("description") && nuevoProducto.hasOwnProperty("price") && nuevoProducto.hasOwnProperty("thumbnail") && nuevoProducto.hasOwnProperty("code") && nuevoProducto.hasOwnProperty("stock") && nuevoProducto.hasOwnProperty("status");
@@ -47,10 +29,8 @@ routerProducts.post("/", async function(request, response){
             response.status(409).json({error: crearProducto.error})
             return;
         }
-
-        // global.io.emit("productList", crearProducto);
-
         response.status(200).json({message: {crearProducto}});
+    
     }else{
         response.status(404).json({message: "Not enough information."});
     }
@@ -59,27 +39,15 @@ routerProducts.post("/", async function(request, response){
 routerProducts.put("/:id", async function(request, response){
     const {id} = request.params;
     const {title, description, price, thumbnail, code, stock, status} = request.body;
-    const nuevoProducto = {
-        title: title,
-        description: description,
-        price: price,
-        thumbnail: thumbnail,
-        code: code,
-        stock: stock,
-        status: status
-    }
+    const nuevoProducto = {title: title,description: description,price: price,thumbnail: thumbnail,code: code,stock: stock,status: status}
 
-    const verificarId = Product.getProductById(+id);
+    const verificarId = Product.getProductById(id);
     if(!verificarId){
         response.status(404).json({message: "Not found id."});
     }else{
         const verifyExistenceUndefined = Object.values(nuevoProducto).indexOf(undefined);
         if (verifyExistenceUndefined === -1) {
-            const actualizarProducto = await Product.updateProduct(+id, nuevoProducto);
-
-            // const allProducts = await Product.addProduct();
-            // global.io.emit("productList", actualizarProducto);
-
+            const actualizarProducto = await Product.updateProduct(id, nuevoProducto);
             response.status(200).json({message: actualizarProducto});
         }else{
             response.status(404).json({message: "Not enough information."});
@@ -88,10 +56,18 @@ routerProducts.put("/:id", async function(request, response){
 });
 
 routerProducts.delete("/:id", async function(request, response){
-    const {id} = request.params;
-    const deleteProduct = await Product.deleteProduct(+id);
-    console.log("Array actualizado", deleteProduct);
-    deleteProduct === "0" ? response.status(404).json("res 1") : response.status(200).json({"Message": deleteProduct});
+    try {
+        const {id} = request.params;
+        const verificarId = await Product.getProductById(id);
+        if(!verificarId){
+            response.status(404).json({message: "Not found id."});
+        }else{
+            const eliminarProducto = await Product.deleteProduct(id);
+            response.status(200).json({message: eliminarProducto});
+        }
+    } catch (error) {
+        response.status(404).json({message: "id NOT found", error});
+    }
 });
 
 export default routerProducts;

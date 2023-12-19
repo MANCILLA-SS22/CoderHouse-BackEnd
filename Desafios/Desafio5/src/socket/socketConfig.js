@@ -1,7 +1,7 @@
 import express from "express";
 import { Server } from "socket.io";
 import http from "http"
-import ProductManager from "../classManagers/ProductManager.js";
+import ProductManager from "../dao/fsClassManager/productsManager/ProductManager.js";
 
 const app = express();
 const httpServer = http.createServer(app);

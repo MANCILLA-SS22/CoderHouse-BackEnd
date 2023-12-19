@@ -1,12 +1,17 @@
 import { Router } from "express";
-import ProductManager from "../classManagers/ProductManager.js";
-
 const router = Router();
-const Product = new ProductManager("./data/products.json");
 
-router.get("/api/products", function(request, response){
-    const data = Product.getProducts();
-    response.render("home", {fileCss: "styles.css", data: data});
+import {ProductManager} from "../dao/mongoClassManager/ProductManager.js";
+const Product = new ProductManager();
+
+router.get("/api/products", async function(request, response){
+    try {
+        const allProducts = await Product.getProducts();
+        response.render("home", {fileCss: "styles.css", data: allProducts});
+    } catch (error) {
+        response.status(500).json({message: {error}})
+    }
+    
 });
 
 router.get("/realTimeProduct", function(request, response){
