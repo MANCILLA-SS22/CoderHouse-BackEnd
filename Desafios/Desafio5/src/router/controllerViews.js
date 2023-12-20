@@ -2,6 +2,7 @@ import { Router } from "express";
 const router = Router();
 
 import {ProductManager} from "../dao/mongoClassManager/ProductManager.js";
+
 const Product = new ProductManager();
 const allProducts = Product.getProducts();
 
@@ -20,7 +21,7 @@ router.get("/realTimeProduct", function(request, response){
 });
 
 router.get("/chat", function(request, response){
-    response.render("chat")
+    response.render("chat", {title: "Form example",fileCss: "styles.css"})
 });
 
 export default router;

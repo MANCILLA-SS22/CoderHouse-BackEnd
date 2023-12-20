@@ -1,9 +1,9 @@
-import { modelChat } from "../models/chat.model";
+import {modelChat} from "../models/chat.model.js"
 
-export class chatManager{
-    async saveMessages(){
+export class ChatManager{
+    async saveMessages(data){
         try {
-            return await modelChat.create();
+            return await modelChat.create(data);
         } catch (error) {
             return error;
         }
