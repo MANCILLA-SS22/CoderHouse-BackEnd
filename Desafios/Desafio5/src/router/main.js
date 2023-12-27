@@ -21,7 +21,7 @@ function routerMain(app){
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(express.static(`${__dirname}/public`)); // Public. Sentamos de manera estatica la carpeta public
-    app.get("/", function(request, response){response.render("index", {title: "Ejercicio",name: "German",fileCss: "styles.css"})});
+    // app.get("/", function(request, response){response.render("index", {title: "Ejercicio",name: "German",fileCss: "styles.css"})});
     app.use(controllerViews);
     app.use("/api/carts", routerCarts);
     app.use("/api/products", routerProducts);    

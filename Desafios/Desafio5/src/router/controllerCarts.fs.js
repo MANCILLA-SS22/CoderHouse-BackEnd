@@ -39,8 +39,7 @@ routerCarts.get("/:id", function(request, response){
     }
 });
 
-//http://localhost:5500/api/carts/2/products/1
-routerCarts.post("/:cartId/products/:productId", async function(request, response){
+routerCarts.post("/:cartId/products/:productId", async function(request, response){  //http://localhost:5500/api/carts/2/products/1
     const {cartId} = request.params;
     const {productId} = request.params;
     const getCartId = CartJSON.getCartById(+cartId); console.log("1", getCartId);

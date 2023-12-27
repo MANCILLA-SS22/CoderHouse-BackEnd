@@ -2,7 +2,12 @@ import { Router } from "express";
 const routerProducts = Router();
 
 import {ProductManager} from "../dao/mongoClassManager/ProductManager.js";
-const Product = new ProductManager();
+const ProductJSON = new ProductManager();
+
+routerProducts.get("/", async function(request, response){
+    const allProducts = await ProductJSON.getProducts();
+    response.json(allProducts)
+});
 
 routerProducts.get("/:id", async function(request, response){
     try {

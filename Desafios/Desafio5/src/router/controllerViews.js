@@ -6,7 +6,7 @@ import {ProductManager} from "../dao/mongoClassManager/ProductManager.js";
 const Product = new ProductManager();
 const allProducts = Product.getProducts();
 
-router.get("/api/products", async function(request, response){
+router.get("/", async function(request, response){
     try {
         const allProducts = await Product.getProducts();
         response.render("home", {fileCss: "styles.css", data: allProducts});

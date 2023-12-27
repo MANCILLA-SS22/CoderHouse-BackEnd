@@ -31,7 +31,7 @@ io.on('connection', async function (socket) {
     socket.on("message", async function(data){//7. Recivimos el mensaje que se capturo en el imput
         Chat.saveMessages(data);
         const messages = await Chat.getMessages();
-        io.emit("messagesLogs", messages); //8. lo enviamos a todo los demas. (Esto es para indicar que se envia a todos y no solo a uno o a todos menos el ultimo, como con broadcast)
+        io.emit("messagesLogs", [data]); //8. lo enviamos a todo los demas. (Esto es para indicar que se envia a todos y no solo a uno o a todos menos el ultimo, como con broadcast)
     });
     
     // socket.emit("messages", async function(data){

@@ -1,7 +1,9 @@
 import {Schema, model} from "mongoose";
 
 const productShema = new Schema({
-    products: Array
+    products: { type: Schema.Types.ObjectId },
+    quantity: Number
+
 });
 
 const cartModel = model("carts", productShema);

@@ -40,8 +40,16 @@ chatbox.addEventListener("keyup", (event) => {
 });
 
 socket.on("messagesLogs", function(data){   //9. Renderizamos losa mensajes en el html
-    const log = document.querySelector("#messages");
-    let messages = "";
-    data.forEach((message) => messages += `<strong>${message.user}</strong>: ${message.message} <br />`);
-    log.innerHTML = messages;
+    const log = document.querySelector("#messages")
+    data.forEach((message) => {
+		const li = document.createElement('li');
+		li.innerHTML = `<strong>${message.user}</strong>: ${message.message} <br />`;
+		log.appendChild(li);
+    });
+
+    // const log = document.querySelector("#messages");
+    // let messages = "";
+    // data.forEach((message) => messages += `<strong>${message.user}</strong>: ${message.message} <br />`);
+    // log.innerHTML = messages;
+
 });
