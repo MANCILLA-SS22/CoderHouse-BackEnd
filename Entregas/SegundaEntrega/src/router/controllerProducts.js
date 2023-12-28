@@ -1,10 +1,9 @@
 import { Router } from "express";
-const routerProducts = Router();
-
 import {ProductManager} from "../dao/mongoClassManager/ProductManager.js";
 const ProductJSON = new ProductManager();
+const routerProducts = Router();
 
-let res;
+let res; 
 
 routerProducts.get("/", async function(request, response){
     try {
@@ -13,43 +12,47 @@ routerProducts.get("/", async function(request, response){
         let filter;
         let sort;
         let prevSort;
-        let link = request.protocol+"://"+request.get("host")+request.originalUrl; //Obtenemos el link original
+        let link = request.protocol+"://"+request.get("host")+'/api/products/'; //Obtenemos el link original
+        let linkProducts = request.protocol+"://"+request.get("host")+'/products/'; //Obtenemos el link original
         let nextLink;
         let prevLink;
 
-        request.query.limit === undefined ? limit = 10 : limit = request.query.limit;
-        request.query.page === undefined ? page = 1 : page = request.query.page;
-        
-        if(request.query.category === undefined && request.query.stock === undefined){
+        if(request.query.category == undefined && request.query.stock == undefined){
             filter = {};
-        }else if(request.query.category === undefined && request.query.stock !== undefined){
+        }else if(request.query.category == undefined && request.query.stock != undefined){
             filter = { stock: {$gte: request.query.stock} };
-        }else if(request.query.category !== undefined && request.query.stock === undefined){
+        }else if(request.query.category != undefined && request.query.stock == undefined){
             filter = { category: {$regex: request.query.category} };
         }else{
-            filter = { stock: {$gte: request.query.stock} };         //$gte --> Matches values that are greater than or equal to a specified value.
-            filter = { category: {$regex: request.query.category} }; //$regex --> Selects documents where values match a specified regular expression.
+            filter = { 
+                category: {$regex: request.query.category},  //$regex --> Selects documents where values match a specified regular expression.
+                stock: {$gte: request.query.stock}           //$gte --> Matches values that are greater than or equal to a specified value.
+            };
         }
 
-        if(request.query.category === "asc"){
+        request.query.limit == undefined ? limit = 10 : limit = request.query.limit;
+        request.query.page == undefined ? page = 1 : page = request.query.page;
+
+        if(request.query.sort == "asc"){
             prevSort = "asc";
             sort = 1;
-        }else if(request.query.category === "desc"){
+        }else if(request.query.sort == "desc"){
             prevSort = "desc";
             sort = -1;
         }else{
             sort = undefined;
-        }
+        }        
 
         let conditionalQuery = {
             page: page,
             limit: limit,
-            sort: {price: sort}
+            sort: { category: sort, price: sort}
         }
 
-        const products = await ProductJSON.getProducts(filter, conditionalQuery); // Model.paginate([query], [options], [callback])
-        products.hasPrevPage === false ? prevLink = null : prevLink = request.protocol + '://' + request.get('host') + '/api/products' + "?"+ `page=${products.prevPage}`+ `$limit=${limit}&sort=${prevSort}`;
-        products.hasNextPage === false ? nextLink = null : nextLink = request.protocol + '://' + request.get('host') + '/api/products' + "?"+ `page=${products.nextPage}`+ `$limit=${limit}&sort=${prevSort}`;
+        const products = await ProductJSON.getProductsNew(filter, conditionalQuery); // Model.paginate([query], [options], [callback])
+        // console.log(products)
+        products.hasPrevPage == false ? prevLink = null : prevLink = request.protocol + '://' + request.get('host') + '/api/products' + "?"+ `page=${products.prevPage}`+ `&limit=${limit}&sort=${prevSort}`;
+        products.hasNextPage == false ? nextLink = null : nextLink = request.protocol + '://' + request.get('host') + '/api/products' + "?"+ `page=${products.nextPage}`+ `&limit=${limit}&sort=${prevSort}`;
 
         res = {
             status: "success",                 //success/error
@@ -62,27 +65,26 @@ routerProducts.get("/", async function(request, response){
             hasNextPage: products.hasNextPage, //Indicador para saber si la página siguiente existe.
             prevLink: prevLink,                //Link directo a la página previa (null si hasPrevPage=false)   
             nextLink: nextLink,                //Link directo a la página siguiente (null si hasNextPage=false)
-            link: link
+            link: link,
+            linkProducts: linkProducts
         };
 
-        console.log(prevLink)
 
-        const allProducts = await ProductJSON.getProducts();    
-        response.json(allProducts);
+        response.status(200).json(res); 
+
+        // const allProducts = await ProductJSON.getProducts();    
+        // response.json(allProducts);
 
     } catch (error) {
-        response.status(500).json({ mesagge: { error } });
-    }    
-
-    // const allProducts = await ProductJSON.getProducts();    
-    // response.json(allProducts);
+        response.status(404).json({ mesagge: { error } });
+    } 
 
 });
 
 routerProducts.get("/:id", async function(request, response){
     try {
         const {id} = request.params;
-        const getById = await Product.getProductById(id);
+        getById = await ProductJSON.getProductById(id);
         response.status(200).json({getById, message: "User found"});
     } catch (error) {
         response.status(404).json({message: "User NOT found", error});
@@ -116,13 +118,13 @@ routerProducts.put("/:id", async function(request, response){
     const {title, description, price, thumbnail, code, stock, status} = request.body;
     const nuevoProducto = {title, description, price, thumbnail, code, stock, status, category}
 
-    const verificarId = Product.getProductById(id);
+    const verificarId = ProductJSON.getProductById(id);
     if(!verificarId){
         response.status(404).json({message: "Not found id."});
     }else{
         const verifyExistenceUndefined = Object.values(nuevoProducto).indexOf(undefined);
-        if (verifyExistenceUndefined === -1) {
-            const actualizarProducto = await Product.updateProduct(id, nuevoProducto);
+        if (verifyExistenceUndefined == -1) {
+            const actualizarProducto = await ProductJSON.updateProduct(id, nuevoProducto);
             response.status(200).json({message: actualizarProducto});
         }else{
             response.status(404).json({message: "Not enough information."});
@@ -133,11 +135,11 @@ routerProducts.put("/:id", async function(request, response){
 routerProducts.delete("/:id", async function(request, response){
     try {
         const {id} = request.params;
-        const verificarId = await Product.getProductById(id);
+        const verificarId = await ProductJSON.getProductById(id);
         if(!verificarId){
             response.status(404).json({message: "Not found id."});
         }else{
-            const eliminarProducto = await Product.deleteProduct(id);
+            const eliminarProducto = await ProductJSON.deleteProduct(id);
             response.status(200).json({message: eliminarProducto});
         }
     } catch (error) {
@@ -145,4 +147,5 @@ routerProducts.delete("/:id", async function(request, response){
     }
 });
 
+// export default routerProducts;
 export {routerProducts, res};

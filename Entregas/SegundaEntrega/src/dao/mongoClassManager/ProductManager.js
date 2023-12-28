@@ -1,16 +1,18 @@
 import productModel from "../models/products.model.js"
 
-export class ProductManager{
+class ProductManager{
 
-    async getProducts (filter, conditionalQuery){
-        return await productModel.find();
+    async getProducts (){
+        return  await productModel.find();
+    }
 
-        // try {
-        //     const product = await productModel.paginate(filter, conditionalQuery);
-        //     return product;
-        // } catch (error) {
-            
-        // }
+    async getProductsNew (filter, conditionalQuery){
+        try {
+            const productos = await productModel.paginate(filter, conditionalQuery);
+            return productos;
+        }catch (error) {
+            return error;
+        }
     }
 
     async getProductById (_id){
@@ -50,6 +52,8 @@ export class ProductManager{
     }
 }
 
+export  {ProductManager}
+
 // AQUI SE ENCUENTRAN LOS OBJETOS PARA REALIZAR PRUEBAS EN POSTMAN
 /* [
     {
@@ -59,7 +63,8 @@ export class ProductManager{
         "thumbnail": "http://dissidentarms.com/wp-content/uploads/2016/12/20210201_181025-scaled.jpg",
         "code": "SS2000",
         "stock": 1,
-        "status": true
+        "status": true,
+        "category": "New"
     }
     {   
         "title": "RPG", 
@@ -68,7 +73,8 @@ export class ProductManager{
         "thumbnail": "https://static.wikia.nocookie.net/squad_gamepedia/images/9/9a/RPG-7_real_life.jpg/revision/latest?cb=20170116205104",
         "code": "SS2001",
         "stock": 5,
-        "status": true
+        "status": true,
+        "category": "Old"
     }
     {   
         "title": "AA-12", 
@@ -77,7 +83,8 @@ export class ProductManager{
         "thumbnail": "https://static.wikia.nocookie.net/squad_gamepedia/images/9/9a/RPG-7_real_life.jpg/revision/latest?cb=20170116205104",
         "code": "SS2002",
         "stock": 8,
-        "status": true
+        "status": true,
+        "category": "Medium"
     }
     {
         "title": "Barret .50 cal", 
@@ -86,7 +93,8 @@ export class ProductManager{
         "thumbnail": "https://www.militarytimes.com/resizer/uM3S85PI9oSYKigYiohxkx3Si7w=/1024x0/filters:format(png):quality(70)/cloudfront-us-east-1.images.arcpublishing.com/archetype/    4FP5BTDFBNDWPOBKJPROA3ZDOE.png",
         "code": "SS2003",
         "stock": 3,
-        "status": true
+        "status": true,
+        "category": "Medium"
     }
     {   
         "title": "AK-12", 
@@ -96,6 +104,7 @@ export class ProductManager{
         "code": "SS2004",
         "stock": 8,
         "status": true
+        "category": "New"
     }
     {
         "title": "MP7", 
@@ -105,6 +114,7 @@ export class ProductManager{
         "code": "SS2005",
         "stock": 10,
         "status": true
+        "category": "Medium"
     }
     {
         "title": "G36C", 
@@ -114,6 +124,7 @@ export class ProductManager{
         "code": "SS2006",
         "stock": 9,
         "status": true
+        "category": "Old"
     }
     {
         "title": "VEPR-12", 
@@ -123,5 +134,6 @@ export class ProductManager{
         "code": "SS2007",
         "stock": 2,
         "status": true
+        "category": "New"
     }
 ] */

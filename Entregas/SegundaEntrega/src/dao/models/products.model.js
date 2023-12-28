@@ -9,9 +9,14 @@ const productShema = new Schema({
     code: String,
     stock: Number,
     status: String,
-    category: String
+    category: String,
+    id: Number
 });
 
 productShema.plugin(mongoosePaginate)
 const productModel = model("products", productShema);
 export default productModel;
+
+/* 
+http://localhost:5500/api/products?page=1&limit=8&sort=asc&stock=3&category=New
+*/
