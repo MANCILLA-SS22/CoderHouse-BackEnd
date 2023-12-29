@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {CartManager} from "../dao/mongoClassManager/CartManager.js";
 import {ProductManager} from "../dao/mongoClassManager/ProductManager.js";
+import { res } from "./controllerProducts.js";
 const routerCarts = Router();
 const CartJSON = new CartManager();
 const ProductJSON = new ProductManager();
@@ -92,17 +93,40 @@ routerCarts.delete("/:cid/products/:pid", async function(requset, response){ //d
     }
 });
 
-
 routerCarts.put("/:cid", async function(requset, response){ //  deberá actualizar el carrito con un arreglo de productos con el formato especificado arriba.
-
+    const {products} = requset.body;
+    const {cid} = requset.params;
+    const getCartId = await CartJSON.updateOneCart(cid, products);
+    response.json(200).status(getCartId);
 });
 
 routerCarts.put("/:cid/products/:pid", async function(requset, response){ //deberá poder actualizar SÓLO la cantidad de ejemplares del producto por cualquier cantidad pasada desde req.body
+    const {quantity} = requset.body;
+    const {cid} = requset.params;
+    const {pid} = requset.params;
+    
+    if (typeof quantity !== "number") return response.status(404).json({messaje: "Error"})
+    
+    const getCartId = await CartJSON.getCartById(cid);
+    const verify = getCartId.products.find(event => event.product.toHexString() === pid);
+    let updateNumberOfProducts = await CartJSON.cartFindById(cid);
 
+    if(verify){
+        const arrayPosition = updateNumberOfProducts.products.findIndex(event => event.product.toHexString() === pid);
+        updateNumberOfProducts.products[arrayPosition].quantity = quantity;
+        const ans = await CartJSON.updateCartByProductsId(cid, updateNumberOfProducts)
+        response.status(200).json({messaje: ans});
+    }else{
+        updateNumberOfProducts.products.push({product: pid, quantity: quantity});
+        const ans = await CartJSON.updateCartByProductsId(cid, updateNumberOfProducts);
+        response.status(200).json({messaje: ans});
+    }
 });
 
 routerCarts.delete("/:cid", async function(requset, response){ //deberá eliminar todos los productos del carrito
-
+    const {cid} = requset.params;
+    const deleteProduct = await CartJSON.deleteProductsById(cid)
+    response.status(200).json({messaje: deleteProduct});
 });
 
 export default routerCarts;
