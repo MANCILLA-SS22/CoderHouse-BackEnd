@@ -84,7 +84,7 @@ routerProducts.get("/", async function(request, response){
 routerProducts.get("/:id", async function(request, response){
     try {
         const {id} = request.params;
-        getById = await ProductJSON.getProductById(id);
+        const getById = await ProductJSON.getProductById(id);
         response.status(200).json({getById, message: "User found"});
     } catch (error) {
         response.status(404).json({message: "User NOT found", error});

@@ -16,7 +16,8 @@ class ProductManager{
     }
 
     async getProductById (_id){
-        return await productModel.findById(_id);
+        const res = await productModel.findById(_id);
+        return res;
     }
 
     async addProduct(product){

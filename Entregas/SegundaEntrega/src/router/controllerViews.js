@@ -23,15 +23,15 @@ router.get("/products", async function(request, response){
     }
 });
 
-router.get("/api/products/:id", async function(request, response){
-    const {id} = request.params;
-    try {
-        const getById = await Product.getProductById(id);
-        response.status(200).render('productInfo', getById); 
-    } catch (error) {
-        response.status(500).json({message: {error}})
-    }
-});
+// router.get("/api/products/:id", async function(request, response){
+//     const {id} = request.params;
+//     try {
+//         const getById = await Product.getProductById(id);
+//         response.status(200).render('productInfo', getById); 
+//     } catch (error) {
+//         response.status(500).json({message: {error}})
+//     }
+// });
 
 
 

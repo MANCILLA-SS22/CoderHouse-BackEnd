@@ -1,10 +1,23 @@
 import {Schema, model} from "mongoose";
 
 const productShema = new Schema({
-    products: { 
-        type: Schema.Types.ObjectId 
-    },
-    quantity: Number
+    products: {
+        type: [
+            {
+                product: { 
+                    type: Schema.Types.ObjectId,
+                    ref: "products"
+                },
+                quantity: Number
+            }
+        ],
+        default: []
+    }
+
+    // products: { 
+    //     type: Schema.Types.ObjectId 
+    // },
+    // quantity: Number
 
 });
 

@@ -35,4 +35,39 @@ export class CartManager{
             return error;
         }
     }
+
+    async deleteProductInCarById(id, newArrayProducts){
+        try {
+            const deleteProduct = await cartModel.findByIdAndUpdate(id, {products: newArrayProducts});
+            return "Product deleted from cart"
+        } catch (error) {
+            
+        }
+    }
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    async deleteProductById(id, arrayProducts){
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
+
+    async updateCartByProductsId(id, arrayProducts){
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
+
+    async updateOneCart(id, arrayProducts){
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
 }
