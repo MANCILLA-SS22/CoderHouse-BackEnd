@@ -2,7 +2,7 @@ import express from "express";
 import { Server } from "socket.io";
 import http from "http"
 import {ProductManager} from "../dao/mongoClassManager/ProductManager.js";
-import { ChatManager } from "../dao/mongoClassManager/ChatManager.js";
+import {ChatManager} from "../dao/mongoClassManager/ChatManager.js";
 
 const app = express();
 const httpServer = http.createServer(app);

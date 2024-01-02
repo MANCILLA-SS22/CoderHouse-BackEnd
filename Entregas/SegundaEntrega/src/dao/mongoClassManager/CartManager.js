@@ -21,7 +21,14 @@ export class CartManager{
 
     async getCartById(id){
         try {
-            return await cartModel.findById(id);
+            // return await cartModel.findById(id);
+
+            //Populate (traditional way)
+            return await cartModel.findById({_id: id}).populate("products.product", "title description price");
+
+            //Populate in middleware
+            // return await cartModel.findOne({_id: id});
+            
         } catch (error) {
             return error
         }
@@ -71,10 +78,9 @@ export class CartManager{
             
         }
     }
-
-
-
-    async cartFindById(cartId){
+    
+    // -------------------------------------->
+    async finder(cartId){
         try {
             return await cartModel.findById(cartId);
         } catch (error) {

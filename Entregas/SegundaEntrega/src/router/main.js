@@ -3,7 +3,7 @@ import handlebars from "express-handlebars";
 import Handlebars from "handlebars";
 import { allowInsecurePrototypeAccess } from "@handlebars/allow-prototype-access";
 import {__dirname} from "../utils.js";
-import routerCarts from "./controllerCarts.js";
+import {routerCarts} from "./controllerCarts.js";
 import {routerProducts} from "./controllerProducts.js";
 // import routerCartsFs from "./controllerCarts.fs.js";
 // import routerProductsFs from "./controllerProducts.fs.js";

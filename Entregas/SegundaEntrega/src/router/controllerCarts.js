@@ -1,14 +1,11 @@
 import { Router } from "express";
 import {CartManager} from "../dao/mongoClassManager/CartManager.js";
 import {ProductManager} from "../dao/mongoClassManager/ProductManager.js";
-import { res } from "./controllerProducts.js";
 const routerCarts = Router();
 const CartJSON = new CartManager();
 const ProductJSON = new ProductManager();
 
-
 routerCarts.get("/", async function(request, response){
-    console.log(quantity)
     const allCarts = await CartJSON.getCart();
     response.json(allCarts)
 });
@@ -24,9 +21,10 @@ routerCarts.post("/", async function(request, response){ //En el endpoint POST '
     }
 });
 
-routerCarts.get("/:id", function(request, response){
+routerCarts.get("/:id", async function(request, response){
     const {id} = request.params;
-    const getId = CartJSON.getCartById(id);
+    const getId = await CartJSON.getCartById(id);
+    console.log(getId)
     if (!getId) {
         response.status(404).json({message: "Cart not found"});
     }else{
@@ -109,7 +107,7 @@ routerCarts.put("/:cid/products/:pid", async function(requset, response){ //debe
     
     const getCartId = await CartJSON.getCartById(cid);
     const verify = getCartId.products.find(event => event.product.toHexString() === pid);
-    let updateNumberOfProducts = await CartJSON.cartFindById(cid);
+    let updateNumberOfProducts = await CartJSON.finder(cid);
 
     if(verify){
         const arrayPosition = updateNumberOfProducts.products.findIndex(event => event.product.toHexString() === pid);
@@ -129,4 +127,4 @@ routerCarts.delete("/:cid", async function(requset, response){ //deberá elimina
     response.status(200).json({messaje: deleteProduct});
 });
 
-export default routerCarts;
+export {routerCarts};

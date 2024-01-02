@@ -7,46 +7,41 @@ let res;
 
 routerProducts.get("/", async function(request, response){
     try {
-        let limit;
-        let page;
-        let filter;
-        let sort;
-        let prevSort;
+        const {category, stock, limit, page, sort} = request.query;
+        let numLimit, numPage, filter, numSort, prevSort, nextLink, prevLink;
         let link = request.protocol+"://"+request.get("host")+'/api/products/'; //Obtenemos el link original
         let linkProducts = request.protocol+"://"+request.get("host")+'/products/'; //Obtenemos el link original
-        let nextLink;
-        let prevLink;
 
-        if(request.query.category == undefined && request.query.stock == undefined){
+        if(category == undefined && stock == undefined){
             filter = {};
-        }else if(request.query.category == undefined && request.query.stock != undefined){
-            filter = { stock: {$gte: request.query.stock} };
-        }else if(request.query.category != undefined && request.query.stock == undefined){
-            filter = { category: {$regex: request.query.category} };
+        }else if(category == undefined && stock != undefined){
+            filter = { stock: {$gte: stock} };
+        }else if(category != undefined && stock == undefined){
+            filter = { category: {$regex: category} };
         }else{
             filter = { 
-                category: {$regex: request.query.category},  //$regex --> Selects documents where values match a specified regular expression.
-                stock: {$gte: request.query.stock}           //$gte --> Matches values that are greater than or equal to a specified value.
+                category: {$regex: category},  //$regex --> Selects documents where values match a specified regular expression.
+                stock: {$gte: stock}           //$gte --> Matches values that are greater than or equal to a specified value.
             };
         }
 
-        request.query.limit == undefined ? limit = 10 : limit = request.query.limit;
-        request.query.page == undefined ? page = 1 : page = request.query.page;
+        limit == undefined ? numLimit = 10 : numLimit = limit;
+        page == undefined ? numPage = 1 : numPage = page;
 
-        if(request.query.sort == "asc"){
+        if(sort == "asc"){
             prevSort = "asc";
-            sort = 1;
-        }else if(request.query.sort == "desc"){
+            numSort = 1;
+        }else if(sort == "desc"){
             prevSort = "desc";
-            sort = -1;
+            numSort = -1;
         }else{
-            sort = undefined;
+            numSort = undefined;
         }        
 
         let conditionalQuery = {
             page: page,
             limit: limit,
-            sort: { category: sort, price: sort}
+            numSort: { category: sort, price: sort}
         }
 
         const products = await ProductJSON.getProductsNew(filter, conditionalQuery); // Model.paginate([query], [options], [callback])

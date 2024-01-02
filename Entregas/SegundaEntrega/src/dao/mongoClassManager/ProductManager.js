@@ -8,8 +8,7 @@ class ProductManager{
 
     async getProductsNew (filter, conditionalQuery){
         try {
-            const productos = await productModel.paginate(filter, conditionalQuery);
-            return productos;
+            return await productModel.paginate(filter, conditionalQuery);
         }catch (error) {
             return error;
         }
