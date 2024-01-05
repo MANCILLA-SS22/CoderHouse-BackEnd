@@ -60,11 +60,11 @@ export class CartManager{
         }
     }
 
-    async updateOneCart(id, arrayProducts){
+    async updateOneCart(cid, arrayProducts){
         try {
-            const cart = await cartModel.findById(id);
-            cart.products = products;
-            const res = await cartModel.findByIdAndUpdate(id, cart);
+            const cart = await cartModel.findById(cid);
+            cart.products = arrayProducts;
+            const res = await cartModel.findByIdAndUpdate(cid, cart);
             return res;
         } catch (error) {
             

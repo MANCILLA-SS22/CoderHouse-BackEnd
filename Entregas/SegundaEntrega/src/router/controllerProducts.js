@@ -7,10 +7,12 @@ let res;
 
 routerProducts.get("/", async function(request, response){
     try {
+        // Copiar y pegar en barra de navegacion --> http://localhost:5500/api/products?page=1&limit=3&sort=asc&stock=1&category=New
         const {category, stock, limit, page, sort} = request.query;
         let numLimit, numPage, filter, numSort, prevSort, nextLink, prevLink;
         let link = request.protocol+"://"+request.get("host")+'/api/products/'; //Obtenemos el link original
-        let linkProducts = request.protocol+"://"+request.get("host")+'/products/'; //Obtenemos el link original
+        // let linkProducts = request.protocol+"://"+request.get("host")+'/products/'; //Obtenemos el link original
+        let linkProducts = '/products/'; //Obtenemos el link original (No hace falta agregar el path completo si el recurso se encuentra dentro del mismo dominio)
 
         if(category == undefined && stock == undefined){
             filter = {};
@@ -25,8 +27,20 @@ routerProducts.get("/", async function(request, response){
             };
         }
 
-        limit == undefined ? numLimit = 10 : numLimit = limit;
-        page == undefined ? numPage = 1 : numPage = page;
+        if (page === undefined) {
+            numPage = 1;
+        } else {
+            numPage = page;
+        }
+
+        if (limit === undefined) {
+            numLimit = 10;
+        } else {
+            numLimit = limit;
+        }
+
+        // page == undefined ? numPage = 1 : numPage = page;
+        // limit == undefined ? numLimit = 5 : numLimit = limit;
 
         if(sort == "asc"){
             prevSort = "asc";
@@ -39,15 +53,14 @@ routerProducts.get("/", async function(request, response){
         }        
 
         let conditionalQuery = {
-            page: page,
-            limit: limit,
-            numSort: { category: sort, price: sort}
-        }
+            page: numPage,
+            limit: numLimit,
+            numSort: { /* category: numSort,  */price: numSort}
+        };
 
-        const products = await ProductJSON.getProductsNew(filter, conditionalQuery); // Model.paginate([query], [options], [callback])
-        // console.log(products)
-        products.hasPrevPage == false ? prevLink = null : prevLink = request.protocol + '://' + request.get('host') + '/api/products' + "?"+ `page=${products.prevPage}`+ `&limit=${limit}&sort=${prevSort}`;
-        products.hasNextPage == false ? nextLink = null : nextLink = request.protocol + '://' + request.get('host') + '/api/products' + "?"+ `page=${products.nextPage}`+ `&limit=${limit}&sort=${prevSort}`;
+        const products = await ProductJSON.getProductsNew(filter, conditionalQuery); // Model.paginate([filter], [options], [callback])
+        products.hasPrevPage == false ? prevLink = null : prevLink = request.protocol+"://"+request.get("host")+'/api/products'+ "?"+ `page=${products.prevPage}`+ `&limit=${limit}&sort=${prevSort}`;
+        products.hasNextPage == false ? nextLink = null : nextLink = request.protocol+"://"+request.get("host")+'/api/products'+ "?"+ `page=${products.nextPage}`+ `&limit=${limit}&sort=${prevSort}`;
 
         res = {
             status: "success",                 //success/error
@@ -65,7 +78,8 @@ routerProducts.get("/", async function(request, response){
         };
 
 
-        response.status(200).json(res); 
+        // response.status(200).json(res.payload); 
+        response.status(200).render('products',{res}); 
 
         // const allProducts = await ProductJSON.getProducts();    
         // response.json(allProducts);
@@ -108,18 +122,18 @@ routerProducts.post("/", async function(request, response){
     }
 });
 
-routerProducts.put("/:id", async function(request, response){
-    const {id} = request.params;
-    const {title, description, price, thumbnail, code, stock, status} = request.body;
+routerProducts.put("/:pid", async function(request, response){
+    const {pid} = request.params;
+    const {title, description, price, thumbnail, code, stock, status, category} = request.body;
     const nuevoProducto = {title, description, price, thumbnail, code, stock, status, category}
 
-    const verificarId = ProductJSON.getProductById(id);
+    const verificarId = ProductJSON.getProductById(pid);
     if(!verificarId){
         response.status(404).json({message: "Not found id."});
     }else{
         const verifyExistenceUndefined = Object.values(nuevoProducto).indexOf(undefined);
         if (verifyExistenceUndefined == -1) {
-            const actualizarProducto = await ProductJSON.updateProduct(id, nuevoProducto);
+            const actualizarProducto = await ProductJSON.updateProduct(pid, nuevoProducto);
             response.status(200).json({message: actualizarProducto});
         }else{
             response.status(404).json({message: "Not enough information."});
@@ -138,7 +152,7 @@ routerProducts.delete("/:id", async function(request, response){
             response.status(200).json({message: eliminarProducto});
         }
     } catch (error) {
-        response.status(404).json({message: "id NOT found", error});
+        response.status(404).json({message: "Not found id.", error});
     }
 });
 

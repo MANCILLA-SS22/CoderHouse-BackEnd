@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {ProductManager} from "../dao/mongoClassManager/ProductManager.js";
 import {CartManager} from "../dao/mongoClassManager/CartManager.js";
-import { res } from "./controllerProducts.js";
+// import { res } from "./controllerProducts.js";
 const router = Router();
 
 const Product = new ProductManager();
@@ -17,19 +17,20 @@ router.get("/", async function(request, response){
     }
 });
 
-router.get("/products", async function(request, response){
-    try {
-        console.log(res)
-        response.status(200).render('products', {res}); 
-    } catch (error) {
-        response.status(500).json({message: {error}})
-    }
-});
+// router.get("/api/products", async function(request, response){
+//     try {
+//         console.log(res)
+//         response.status(200).render('products', {res}); 
+//     } catch (error) {
+//         response.status(500).json({message: {error}})
+//     }
+// });
 
 router.get("/carts/:cid", async function(request, response){
     try {
         const {cid} = request.params;
         const getId = await CartJSON.getCartById(cid);
+        
         console.log(getId)
         response.status(200).render("carts", getId);
     } catch (error) {
@@ -46,8 +47,6 @@ router.get("/carts/:cid", async function(request, response){
 //         response.status(500).json({message: {error}})
 //     }
 // });
-
-
 
 router.get("/realTimeProduct", function(request, response){
     response.render("realTimeProducts", {title: "Form example",fileCss: "styles.css", allProducts})

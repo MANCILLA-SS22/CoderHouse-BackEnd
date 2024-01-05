@@ -16,7 +16,3 @@ const productShema = new Schema({
 productShema.plugin(mongoosePaginate)
 const productModel = model("products", productShema);
 export default productModel;
-
-/* 
-http://localhost:5500/api/products?page=1&limit=8&sort=asc&stock=3&category=New
-*/

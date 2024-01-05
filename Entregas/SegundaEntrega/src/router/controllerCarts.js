@@ -51,7 +51,7 @@ routerCarts.post("/:cid/products/:pid", async function(request, response){
         if (!getProductId){
             response.status(404).json({message: "Not found product id."});
         }else{
-            const verificarCartProduct = cartIdProducts.find(event => event.product.toHexString() === pid);
+            const verificarCartProduct = cartIdProducts.find((event) => event.product._id.toString() === pid);
             if (verificarCartProduct === undefined){
                 const newObject = {
                     product: pid,
@@ -62,7 +62,7 @@ routerCarts.post("/:cid/products/:pid", async function(request, response){
                 const updateCartProducts = await CartJSON.updateCartProductsId(cid, cartIdProducts);
                 response.status(200).json(updateCartProducts);
             }else{
-                const productsArrayPosition = cartIdProducts.findIndex(event => event.product.toHexString() === pid);
+                const productsArrayPosition = cartIdProducts.findIndex(event => event.product.toString() === pid);
                 cartIdProducts[productsArrayPosition].quantity += 1;
 
                 const updateCartProducts = await CartJSON.updateCartProductsId(cid, cartIdProducts);
@@ -77,10 +77,10 @@ routerCarts.delete("/:cid/products/:pid", async function(requset, response){ //d
     const {pid} = requset.params;
     const getCartId = await CartJSON.getCartById(cid);
 
-    const verify = getCartId.products.find(event => event.product.toHexString() === pid);
+    const verify = getCartId.products.find(event => event.product._id.toString() === pid);
 
     if(verify){
-        const productPosition = getCartId.products.findIndex(event => event.product.toHexString() === pid); //Buscamos la posicion del producto a eliminar
+        const productPosition = getCartId.products.findIndex(event => event.product._id.toString() === pid); //Buscamos la posicion del producto a eliminar
         getCartId.products.splice(productPosition, 1) //Una vez encontrado, eliminamos el producto (con la posicion obtenida)
         const newArray = getCartId.products;
         const deleteProduct = await CartJSON.deleteProductInCarById(cid, newArray);
@@ -91,9 +91,9 @@ routerCarts.delete("/:cid/products/:pid", async function(requset, response){ //d
     }
 });
 
-routerCarts.put("/:cid", async function(requset, response){ //  deberá actualizar el carrito con un arreglo de productos con el formato especificado arriba.
-    const {products} = requset.body;
-    const {cid} = requset.params;
+routerCarts.put("/:cid", async function(request, response){ //  deberá actualizar el carrito con un arreglo de productos con el formato especificado arriba.
+    const {products} = request.body;
+    const {cid} = request.params;
     const getCartId = await CartJSON.updateOneCart(cid, products);
     response.json(200).status(getCartId);
 });
@@ -106,18 +106,21 @@ routerCarts.put("/:cid/products/:pid", async function(requset, response){ //debe
     if (typeof quantity !== "number") return response.status(404).json({messaje: "Error"})
     
     const getCartId = await CartJSON.getCartById(cid);
-    const verify = getCartId.products.find(event => event.product.toHexString() === pid);
-    let updateNumberOfProducts = await CartJSON.finder(cid);
-
+    const verify = getCartId.products.find(event => event.product._id.toString() === pid);
+    
     if(verify){
-        const arrayPosition = updateNumberOfProducts.products.findIndex(event => event.product.toHexString() === pid);
+        let updateNumberOfProducts = await CartJSON.finder(cid);
+        const arrayPosition = updateNumberOfProducts.products.findIndex(event => event.product._id.toString() === pid);
         updateNumberOfProducts.products[arrayPosition].quantity = quantity;
-        const ans = await CartJSON.updateCartByProductsId(cid, updateNumberOfProducts)
-        response.status(200).json({messaje: ans});
+        const ans = await CartJSON.updateCartByProductsId(cid, updateNumberOfProducts);
+        console.log("ans", ans)
+        response.status(200).json({messaje: "Product quntity updated"});
     }else{
+        let updateNumberOfProducts = await CartJSON.finder(cid);
         updateNumberOfProducts.products.push({product: pid, quantity: quantity});
         const ans = await CartJSON.updateCartByProductsId(cid, updateNumberOfProducts);
-        response.status(200).json({messaje: ans});
+        console.log("ans", ans)
+        response.status(200).json({messaje: "Product quntity updated"});
     }
 });
 
