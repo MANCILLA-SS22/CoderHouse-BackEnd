@@ -11,7 +11,7 @@ const allProducts = Product.getProducts();
 router.get("/", async function(request, response){
     try {
         const allProducts = await Product.getProducts();
-        response.render("home", {fileCss: "styles.css", data: allProducts});
+        response.render("home", {fileCss: "styles.css", data: allProducts, name: "German"});
     } catch (error) {
         response.status(500).json({message: {error}})
     }

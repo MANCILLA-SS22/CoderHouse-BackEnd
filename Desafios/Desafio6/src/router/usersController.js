@@ -1,24 +1,35 @@
 import { Router } from "express";
 import { UserManager } from "../dao/mongoClassManager/UserManager.js";
-import { userModel } from "../dao/models/user.model.js";
 
 const router = Router();
 const userDB = new UserManager();
 
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    const user = await userModel.findOne({ email, password }); //Ya que el password no está hasheado, podemos buscarlo directamente
+router.post('/login', async function(req, res){
+    const { email, password } = req.body;             //console.log(email, password)
+    const response = await userDB.findUser({email});    console.log("user: ", response)
 
-    if (!user) return res.status(401).send({ status: 'error', error: "Incorrect credentials" })
-
-    req.session.user = {
-        name: `${user.first_name} ${user.last_name}`,
-        email: user.email,
-        age: user.age
+    if (email === "adminCoder@coder.com" && password === "adminCod3r123"){
+        req.session.user = { //creamos session con el atributo user
+            first_name: email,
+            role: "admin"
+        }
+        return res.status(201).json({data: req.session.user})
     }
 
-    res.send({ status: "success", payload: req.session.user, message: "¡Primer logueo realizado! :)" });
-})
+    if(!response || response.password !== password){
+        return res.status(401).json({message: "Login failed, check your credentials"});
+    }else{
+        //creamos session con el atributo user
+        req.session.user = { 
+            first_name: response.first_name,
+            last_name: response.last_name,
+            email: response.email,
+            age: response.age,
+        }
+        return res.json({ message: req.session.user });
+        // return res.send({  status: "success",  payload: req.session.user,  message: "¡Primer logueo realizado! :)"  });
+    }
+});
 
 router.post('/register', async function(req, res){
     try {
@@ -41,13 +52,11 @@ router.post('/register', async function(req, res){
     }
 });
 
-router.get("/logout", function(req, res){
-    req.session.destroy(function(error){
-        if(error){
-            res.json({error: "Error logout", msg: "Error al cerrar la sesion"});
-        }
-        res.redirect("/login");
-    })
-});
+router.get('/logout',  function(req,res){ //http://localhost:5500/api/sessions/logout
+    req.session.destroy(err =>{
+        if(!err) return res.status(200).send("deslogueo exitoso")
+        else res.send("fallo el deslogueo")
+    });
+})
 
 export default router;

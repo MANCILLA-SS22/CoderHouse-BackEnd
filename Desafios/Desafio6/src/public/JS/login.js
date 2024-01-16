@@ -10,6 +10,6 @@ form.addEventListener('submit', function(e){
         body: JSON.stringify(obj),
         headers: { 'Content-Type': 'application/json' }
     }).then(function(result){
-        if (result.status === 201) window.location.replace('/users');
+        if (result.status === 200) window.location.replace('/users');
     });
 })
