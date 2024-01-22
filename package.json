@@ -5,7 +5,7 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./Entregas/SegundaEntrega/src/app.js"
+    "start": "nodemon ./Desafios/Desafio7/src/app.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "express-handlebars": "^7.1.2",
     "express-session": "^1.17.3",
     "handlebars": "^4.7.8",
+    "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
     "mongodb": "^6.3.0",
     "mongoose": "^8.0.3",
@@ -36,10 +37,14 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "passport": "^0.7.0",
+    "passport-github": "^1.1.0",
+    "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "redux": "^5.0.1",
     "session-file-store": "^1.5.0",
+    "slugify": "^1.6.6",
     "socket.io": "^4.7.2",
-    "socket.io-client": "^4.7.3"
+    "socket.io-client": "^4.7.3",
+    "validator": "^13.11.0"
   }
 }
