@@ -9,7 +9,7 @@ function middlewares(app, express){
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     app.use(express.static(`${__dirname}/public`)); // Public. Sentamos de manera estatica la carpeta public
-    app.use(cookieParser(false));
+    app.use(cookieParser("CoderS3cr3tC0d3")); //colocamos la inicialización de nuestro passport, la inicialización de passport y cookieParser también para que el servidor pueda reconocer correctamente las cookies. 
 }
 
 export default middlewares;

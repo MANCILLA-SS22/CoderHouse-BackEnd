@@ -15,6 +15,7 @@ function routerMain(app){
 
     app.use("/chat", chatController);
     app.use("/realTimeProduct", realTimeProductsController);
+    
     app.use("/api/carts", routerCarts);
     app.use("/api/products", routerProducts);   
     

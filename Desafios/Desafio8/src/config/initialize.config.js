@@ -27,7 +27,7 @@ function initialPassport(){
     passport.use("login", new localStrategy( {passReqToCallback: true, usernameField: 'email'}, login ));
     passport.use("github", new GitHubStrategy( {clientID: clientID_github, clientSecret: clientSecret_github, callbackUrl: "http://localhost:5500/api/auth/githubcallback"}, github ));
     passport.serializeUser(serialize); 
-    passport.deserializeUser(deserialize);    
+    passport.deserializeUser(deserialize);
 }
 
 async function jwt(jwt_payload, done){
@@ -41,7 +41,7 @@ async function jwt(jwt_payload, done){
 }
 
 async function register(req, username, password, done){
-    const { first_name, last_name, email, age } = req.body;
+    const { first_name, last_name, email, age, role } = req.body;
     try {
         const exist  = await userManager.findUser({email}); //Validamos si el usuario existe en la base de datos
         if(exist){
@@ -54,7 +54,8 @@ async function register(req, username, password, done){
             last_name: last_name,
             email: email,
             age: age,
-            password: createHash(password)
+            password: createHash(password),
+            role: role
         }
 
         const result = await userManager.createUser(user);
@@ -68,16 +69,11 @@ async function register(req, username, password, done){
 async function login(req, username, password, done){
     try {
         const user = await userManager.findUser({ email: username });
-        console.log("Usuario encontrado para login:", user);
+        // console.log("Usuario encontrado para login:", user);
 
-        if (!user) {
-            console.warn("User doesn't exists with username: " + username);
-            return done(null, false);
-        }
-        if (!validateHash(user, password)) {
-            console.warn("Invalid credentials for user: " + username);
-            return done(null, false);
-        }
+        if (!user) return done(null, false);
+        if (!validateHash(user, password)) return done(null, false)
+
         return done(null, user);
     } catch (error) {
         return done(error);
@@ -111,11 +107,10 @@ async function github(accessToken, refreshToken, profile, done){
 };
 
 function cookieExtractor(req){
-    let token = null;  console.log("Entrando a Cookie Extractor");
+    let token = null;  console.log("Entrando a Cookie Extractor: ");
     if (req && req.cookies) {//Validamos que exista el request y las cookies.
         token = req.cookies['jwtCookieToken']; // jwtCookieToken viene de jwt.routes donde se almaceno la cookie
-        console.log("Cookies presentes: ", req.cookie);
-        console.log("Token obtenido desde Cookie: ", token);
+        console.log("Cookies presentes: ", req.cookies);  console.log("Token obtenido desde Cookie: ", token);
     }
     return token;
 };

@@ -25,6 +25,7 @@ router.post('/login', async function(req, res){
             last_name: response.last_name,
             email: response.email,
             age: response.age,
+            role: response.role
         }
         return res.json({ message: req.session.user });
         // return res.send({  status: "success",  payload: req.session.user,  message: "¡Primer logueo realizado! :)"  });
@@ -33,7 +34,7 @@ router.post('/login', async function(req, res){
 
 router.post('/register', async function(req, res){
     try {
-        const { first_name, last_name, email, age, password } = req.body;
+        const { first_name, last_name, email, age, password, role } = req.body;
         // console.log("Registrando usuario:", req.body);
     
         const user = {
@@ -41,7 +42,8 @@ router.post('/register', async function(req, res){
             last_name: last_name, 
             email: email,
             age: age,
-            password: password
+            password: password,
+            role: role
         }
     
         const result = await userDB.createUser(user);

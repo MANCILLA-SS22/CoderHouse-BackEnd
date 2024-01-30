@@ -17,7 +17,7 @@ function validateHash(user, password){ //Validamos el hash.
 };
 
 function generateJWToken(user){ //Generamos el token
-    return jwt.sign({ user }, secretKey, { expiresIn: '24h' })
+    return jwt.sign({ user }, secretKey, { expiresIn: '60s' })
 };
 
 function authToken(req, res, next){ //El JWT token se guarda en los headers de autorización.

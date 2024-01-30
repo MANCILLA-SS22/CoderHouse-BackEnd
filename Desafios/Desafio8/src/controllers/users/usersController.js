@@ -1,32 +1,36 @@
 import { Router } from "express";
 import passport from "passport";
-import { UserManager } from "../../dao/mongoClassManager/UserManager.js";
 import { validateHash, generateJWToken } from "../../utils.js";
 
 const router = Router();
-const userManager = new UserManager();
 
-// router.post('/login', passport.authenticate("login", {failureRedirect: "api/auth/fail-failLogin"}), login); //Utilizando passport
-router.post('/register', passport.authenticate("register", {failureRedirect: "api/auth/fail-register"}), register);
-router.post('/login', login);
+router.post('/login', passport.authenticate("login", {session:false, failureRedirect: "api/auth/fail-failLogin"}), login); // Eliminar "session:false" si se trabaja con passport. Agregar "session:false" si se trabaja con JWT
+router.post('/register', passport.authenticate("register", {session:false, failureRedirect: "api/auth/fail-register"}), register);
 
 router.get('/github', passport.authenticate("github", { scope: ['user:email'] }), async function(req, res){});  //Este primer link es el que mandamos a llamar desde el front. Al entrar, pasa por el middleware de passport-github, lo ual pedira autorizacion para acceder al perfil. En cuando se pueda acceder al perfil, passport enviara la info hacia el callback especificado. scope: [ 'user:email' ] se usa por defecto al trabajar con passport-github
-router.get("/githubcallback", passport.authenticate('github', { failureRedirect: '/github/error' }), githubcallback); //Este callback TIENE QUE COINCIDIR con el que fijamos en la app de Hithub. Este se encargara de hacer la redireccion final a la ventana de home, una vez que el login haya logrado establecer la secion.
+router.get("/githubcallback", passport.authenticate('github', { session:false, failureRedirect: '/github/error' }), githubcallback); //Este callback TIENE QUE COINCIDIR con el que fijamos en la app de Hithub. Este se encargara de hacer la redireccion final a la ventana de home, una vez que el login haya logrado establecer la secion.
 
 router.get("/fail-register", failRegister);
 router.get("/fail-login", failLogin);
 router.get('/logout',  logout);
 
-async function login(req, res){ //Login con jwt y cookies
-    const {email, password} = req.body;
+async function login(req, res){
     try {
-        const user = await userManager.findUser({ email });
-        console.log("Usuario encontrado para login: ", user);
+        if(!req.user) return res.status(400).json({message: "Invalid credentials"});
 
-        if (!user)                         return res.status(204).send({ error: "Not found", message: "User doesn't exists with username: " + email });
-        if (!validateHash(user, password)) return res.status(401).send({ status: "error", error: "Invalid credentials for user: "+ email});
+        console.log("User found to login:", req.user);    
+        const user = req.user;
+        
+        //Trabajando con SESSIONS
+        // req.session.user = { // creamos session con el atributo user con "session" (Metodo 1)
+        //     name: `${user.first_name} ${user.last_name}`,
+        //     email: user.email,
+        //     age: user.age
+        // }
+        // res.send({ status: "success", payload: req.session.user, message: "¡Primer logueo realizado! :)" });
 
-        const tokenUser = {
+        //Trabajando con JWT
+        const tokenUser = { // creamos un usuario con un token generado (Metodo 2)
             name: `${user.first_name} ${user.last_name}`,
             email: user.email,
             age: user.age,
@@ -34,13 +38,13 @@ async function login(req, res){ //Login con jwt y cookies
         };
 
         const access_token = generateJWToken(tokenUser);  console.log(access_token);
-        res.cookie('jwtCookieToken', access_token, { maxAge: 60000, httpOnly: true } ) //Aqui se almacena la cookie
-        res.send({ message: "Login success!!" });
+        res.cookie('jwtCookieToken', access_token, { maxAge: 60000, httpOnly: false } ) //Aqui se almacena la cookie
+        res.send({ message: "Login success!!"});
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).send({ status: "error", error: "Error interno de la applicacion." });
+        return res.status(400).send({status: "error", msg: "Usuario existente!"});
     }
-}
+};
 
 async function register(req, res){
     console.log("Registrando usuario");
@@ -78,26 +82,5 @@ function failRegister(req, res){
 function failLogin(req, res){
     res.status(401).send({ error: "Failed to process login!" });
 }
-
-
-/* async function login(req, res){ //Login con sessions
-    try {
-        if(!req.user) return res.status(400).json({message: "Invalid credentials"});
-
-        console.log("User found to login:", req.user);    
-        const user = req.user;
-    
-        // creamos session con el atributo user con "session" (Metodo 1)
-        req.session.user = { 
-            name: `${user.first_name} ${user.last_name}`,
-            email: user.email,
-            age: user.age
-        }
-        res.send({ status: "success", payload: req.session.user, message: "¡Primer logueo realizado! :)" });
-
-    } catch (error) {
-        return res.status(400).send({status: "error", msg: "Usuario existente!"});
-    }
-}; */
 
 export default router;

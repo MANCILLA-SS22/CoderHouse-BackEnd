@@ -6,9 +6,42 @@ import passport from 'passport';
 const router = Router();
 const productManager = new ProductManager();
 
+//////////////////////////////    TRABAJANDO CON SESSIONS     //////////////////////////////
+
+// function logger(req, res, next){
+//     console.log("req.session.user", req.session.user)
+//     if (req.session.user){
+//         return res.redirect("/api/products");
+//     }else{
+//         next();
+//     }
+// }
+
+// router.get("/login", logger, function(req, res){
+//     res.render('login')
+// });
+
+// router.get("/register", logger, function(req, res){
+//     res.render('register')
+// });
+
+// router.get("/", logger, async function(req, res){ //Este se usa con sessions
+//     try {
+//         const allProducts = await productManager.getProducts();
+//         res.render('profile', {fileCss: "styles.css", data: allProducts, user: req.session.user});
+//     } catch (error) {
+//         res.status(500).json({message: {error}})
+//     }    
+// });
+
+
+//////////////////////////////    TRABAJANDO CON JWT     //////////////////////////////
+
+
 function logger(req, res, next){
-    if (req.session.user){
-        return res.redirect("/api/products");
+    console.log("req", req.cookies)
+    if (req.cookies.jwtCookieToken){
+        return res.redirect("/");
     }else{
         next();
     }
@@ -21,17 +54,6 @@ router.get("/login", logger, function(req, res){
 router.get("/register", logger, function(req, res){
     res.render('register')
 });
-
-// router.get("/", async function(req, res){ //Este se usa con sessions
-//     try {
-//         const allProducts = await productManager.getProducts();
-//         console.log("allProducts", allProducts)
-//         res.render('profile', {fileCss: "styles.css", data: allProducts, user: req.session.user});
-//     } catch (error) {
-//         res.status(500).json({message: {error}})
-//     }    
-// });
-
 
 // Metodo 0: Usando Authorization Bearer Token
 // router.get("/", function(req, res){
@@ -57,7 +79,6 @@ router.get("/register", logger, function(req, res){
 //Metodo 2: Usando JWT por Cookie
 router.get("/", passport.authenticate('jwt', { session: false }), async function(req, res){  //Colocamos session:false debido a que no ocupamos express-session para estos procesos.
     const allProducts = await productManager.getProducts();
-    console.log("allProducts", allProducts)
     res.render('profile', {user: req.user, data: allProducts});
 });
 
