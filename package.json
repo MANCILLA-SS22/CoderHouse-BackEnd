@@ -5,7 +5,7 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./Desafios/Desafio8/src/app.js"
+    "start": "nodemon ./Desafios/Desafio8-JWT/src/app.js"
   },
   "repository": {
     "type": "git",
