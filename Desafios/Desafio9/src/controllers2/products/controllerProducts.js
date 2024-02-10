@@ -87,9 +87,8 @@ class ProductRouter extends Route{
         
                 // res.status(200).json(res.payload); 
                 res.status(200).render('products',{ans}); 
+                // res.sendSuccess(ans)
         
-                // const allProducts = await ProductJSON.getProducts();    
-                // res.json(allProducts);
         
             } catch (error) {
                 res.status(404).json({ mesagge:"No hay nada!!" });

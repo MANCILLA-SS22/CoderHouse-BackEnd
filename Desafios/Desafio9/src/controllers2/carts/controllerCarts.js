@@ -34,8 +34,7 @@ class CartRouter extends Route{
 
         this.get("/:id", ['PUBLIC'], logger, async function(request, response){
             const {id} = request.params;
-            const getId = await CartJSON.getCartById(id);
-            console.log(getId)
+            const getId = await CartJSON.getCartById(id);  console.log(getId)
             if (!getId) {
                 response.status(404).json({message: "Cart not found"});
             }else{

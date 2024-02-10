@@ -44,36 +44,6 @@ router.get("/", passport.authenticate('jwt', { session: false }), async function
 //     res.render('profile', {user: req.user});
 // });
 
-//////////////////////////////    TRABAJANDO CON SESSIONS     //////////////////////////////
-
-// function logger(req, res, next){
-//     console.log("req.session.user", req.session.user)
-//     if (req.session.user){
-//         return res.redirect("/api/products");
-//     }else{
-//         next();
-//     }
-// }
-
-// router.get("/login", logger, function(req, res){
-//     res.render('login')
-// });
-
-// router.get("/register", logger, function(req, res){
-//     res.render('register')
-// });
-
-// router.get("/", logger, async function(req, res){ //Este se usa con sessions
-//     try {
-//         const allProducts = await productManager.getProducts();
-//         res.render('profile', {fileCss: "styles.css", data: allProducts, user: req.session.user});
-//     } catch (error) {
-//         res.status(500).json({message: {error}})
-//     }    
-// });
-
-
-//////////////////////////////    TRABAJANDO CON JWT     //////////////////////////////
 
 
 export default router;

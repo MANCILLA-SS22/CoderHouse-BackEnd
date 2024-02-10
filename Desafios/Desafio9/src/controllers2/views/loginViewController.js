@@ -55,7 +55,7 @@ class LoginRegister extends Route {
         
         this.get("/github/error", ['USER'], function(req, res){
             res.render("error", { error: "No se pudo autenticar usando GitHub!" });
-        });
+        });     
 
 
         /* // Metodo 1: Usando Authorization Bearer Token (USAR POSTMAN O NO FUNCIONARA)

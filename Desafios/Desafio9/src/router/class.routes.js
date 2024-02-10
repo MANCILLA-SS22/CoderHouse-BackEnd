@@ -1,6 +1,7 @@
-import { SECRET_KEY } from "../config/dotenvMain/env.config.js";
+// import { SECRET_KEY } from "../config/dotenvMain/env.config.js";
+// import jwt from "jsonwebtoken";
 import { Router } from "express";
-import jwt from "jsonwebtoken";
+import passport from "passport";
 
 class CustomRouter { //Esta es la clase padre, y CustomRouter es la clase que hereda de esta misma clase.
     constructor() {
@@ -36,23 +37,21 @@ class CustomRouter { //Esta es la clase padre, y CustomRouter es la clase que he
     };    
 
     handlePolicies(policies){
-
         return function(req, res, next){
             if(policies[0] === "PUBLIC") return next();
+            
+            passport.authenticate("jwt", authJWT)(req, res, next); //Colocamos (req, res, next) para que se incoque la funcion a si misma sin necesidad de llamarla desde otro medio.
+    
+            function authJWT(err, user, info){ //La funcion interna en passport.authenticate(), por defecto tiene tres parametros que representan el error, el usuario y la informacion.
+                if (err) return next(err); // will generate a 500 error
+                if (!user) return res.status(401).send({ error: info.messages ? info.messages : info.toString() }); // Generate a JSON response reflecting authentication status
+                console.log("user.role", user.role)
+                if (user.role !== policies[0]) return res.status(403).send({ error: "Forbidden. You don`t have enough permissions" });
 
-            //Cuando es una ruta protegida, hacemos el proceso de extraccion del token
-            const authHeader = req.headers.authorization;
-            if(!authHeader) return res.status(401).send({error: "User not authenticcated or missing token!"});
-            const token = authHeader.split(' ')[1]//Se hace el split para retirar la palabra Bearer.
-
-            //Validamos si es un token valido
-            jwt.verify(token, SECRET_KEY, function(error, credential){
-                if(error) return res.status(403).send({error: "Token invalid, Unauthorized!"});
-                const user = credential.user;
-                if( !policies.includes(user.role.toUpperCase()) ) return res.status(401).send({error: "El usuario no tiene privilegios, revisa tus roles!"});
+                console.log("Usuario obtenido del strategy: ", user);
                 req.user = user;
                 next();
-            });
+            }
         }
     }
 

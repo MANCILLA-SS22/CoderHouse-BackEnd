@@ -6,8 +6,10 @@ class AuthRouter extends Route {
     init(){
         this.post('/login', ['PUBLIC'], passport.authenticate("login", {session:false, failureRedirect: "api/auth/fail-failLogin"}), login); // Eliminar "session:false" si se trabaja con passport. Agregar "session:false" si se trabaja con JWT
         this.post('/register', ['PUBLIC'], passport.authenticate("register", {session:false, failureRedirect: "api/auth/fail-register"}), register);
-        this.get('/github', ['PUBLIC'], passport.authenticate("github", { scope: ['user:email'] }), async function(req, res){});  //Este primer link es el que mandamos a llamar desde el front. Al entrar, pasa por el middleware de passport-github, lo ual pedira autorizacion para acceder al perfil. En cuando se pueda acceder al perfil, passport enviara la info hacia el callback especificado. scope: [ 'user:email' ] se usa por defecto al trabajar con passport-github
+        
+        this.get('/github', ['PUBLIC'], passport.authenticate("github", {session:false, scope: ['user:email'] }), async function(req, res){});  //Este primer link es el que mandamos a llamar desde el front. Al entrar, pasa por el middleware de passport-github, lo ual pedira autorizacion para acceder al perfil. En cuando se pueda acceder al perfil, passport enviara la info hacia el callback especificado. scope: [ 'user:email' ] se usa por defecto al trabajar con passport-github
         this.get("/githubcallback", ['PUBLIC'], passport.authenticate('github', { session:false, failureRedirect: '/github/error' }), githubcallback); //Este callback TIENE QUE COINCIDIR con el que fijamos en la app de Hithub. Este se encargara de hacer la redireccion final a la ventana de home, una vez que el login haya logrado establecer la secion.
+        
         this.get("/fail-register", ['PUBLIC'], failRegister);
         this.get("/fail-login", ['PUBLIC'], failLogin);
         this.get('/logout', ['PUBLIC'],  logout);
@@ -18,14 +20,6 @@ class AuthRouter extends Route {
         
                 console.log("User found to login:", req.user);    
                 const user = req.user;
-                
-                //Trabajando con SESSIONS
-                // req.session.user = { // creamos session con el atributo user con "session" (Metodo 1)
-                //     name: `${user.first_name} ${user.last_name}`,
-                //     email: user.email,
-                //     age: user.age
-                // }
-                // res.send({ status: "success", payload: req.session.user, message: "¡Primer logueo realizado! :)" });
         
                 //Trabajando con JWT
                 const tokenUser = { // creamos un usuario con un token generado (Metodo 2)
@@ -50,27 +44,22 @@ class AuthRouter extends Route {
         };
         
         async function githubcallback(req, res){ 
+            console.log("Githhub")
             const user = req.user;
-            req.session.user = {
+            const tokenUser = { // creamos un usuario con un token generado (Metodo 2)
                 name: `${user.first_name} ${user.last_name}`,
                 email: user.email,
-                age: user.age
+                age: user.age,
+                role: user.role
             };
-            req.session.admin = true;  
-            res.redirect("/api/products");
+            const access_token = generateJWToken(tokenUser); 
+            res.cookie('jwtCookieToken', access_token, { maxAge: 60000, httpOnly: false } ) //Aqui se almacena la cookie
+            res.redirect("/");
         }
         
         function logout(req,res){ //http://localhost:5500/api/auth/logout
-            req.session.destroy(err =>{
-                if(!err){
-                    return res.status(200).send("deslogueo exitoso");
-                } else{
-                    // res.send("fallo el deslogueo");
-                    res.redirect("/login");
-                }
-        
-        
-            });
+            res.clearCookie("jwtCookieToken").send("Sesion cerrada. Volver a iniciar sesion!!");
+            // res.redirect("/login");
         }
         
         function failRegister(req, res){
