@@ -1,8 +1,6 @@
-import dotenv from "dotenv";  dotenv.config({path: "Desafios/Desafio8-JWT/src/config.env"});
+import { SECRET_KEY } from "../config/dotenvMain/env.config.js";
 import { Router } from "express";
 import jwt from "jsonwebtoken";
-
-const secretKey = process.env.PRIVATE_KEY;
 
 class CustomRouter { //Esta es la clase padre, y CustomRouter es la clase que hereda de esta misma clase.
     constructor() {
@@ -18,7 +16,7 @@ class CustomRouter { //Esta es la clase padre, y CustomRouter es la clase que he
 
     //GET
     get(path, policies, ...callbacks) { // (1)
-        console.log("Entrando por GET a custom router con Path: " + path, " y policies: ", policies); 
+        // console.log("Entrando por GET a custom router con Path: " + path, " y policies: ", policies); 
         this.router.get(path, this.handlePolicies(policies), this.generateCustomRespones(), this.applyCallbacks(callbacks)); // (2)
     }
 
@@ -40,20 +38,19 @@ class CustomRouter { //Esta es la clase padre, y CustomRouter es la clase que he
     handlePolicies(policies){
 
         return function(req, res, next){
-            console.log("Politicas a evaluar: ", policies);
             if(policies[0] === "PUBLIC") return next();
 
             //Cuando es una ruta protegida, hacemos el proceso de extraccion del token
-            const authHeader = req.headers.authorization; console.log("Token present in header auth: ", authHeader);
+            const authHeader = req.headers.authorization;
             if(!authHeader) return res.status(401).send({error: "User not authenticcated or missing token!"});
             const token = authHeader.split(' ')[1]//Se hace el split para retirar la palabra Bearer.
 
             //Validamos si es un token valido
-            jwt.verify(token, secretKey, function(error, credential){
+            jwt.verify(token, SECRET_KEY, function(error, credential){
                 if(error) return res.status(403).send({error: "Token invalid, Unauthorized!"});
                 const user = credential.user;
                 if( !policies.includes(user.role.toUpperCase()) ) return res.status(401).send({error: "El usuario no tiene privilegios, revisa tus roles!"});
-                req.user = user;  console.log(req.user);
+                req.user = user;
                 next();
             });
         }
@@ -64,9 +61,18 @@ class CustomRouter { //Esta es la clase padre, y CustomRouter es la clase que he
         return function(req, res, next){
 
             //Agregamos estas propiedades a cada uno de los 5 objetos, los cuales inicialmente no existen
-            res.sendSuccess = function(payload){res.status(200).send({status: "Success", payload})}
-            res.sendInternalServerError = function(error){res.status(500).send({status: "Error", error})}
-            res.sendClientError = function(error){res.status(400).send({status: "Client error ", error})}
+            res.sendSuccess = function(payload){
+                res.status(200).send({status: "Success", payload})
+            }
+
+            res.sendInternalServerError = function(error){
+                res.status(500).send({status: "Error", error})
+            }
+
+            res.sendClientError = function(error){
+                res.status(400).send({status: "Client error ", error})
+            }
+
             next();
         }
     };
@@ -77,7 +83,7 @@ class CustomRouter { //Esta es la clase padre, y CustomRouter es la clase que he
                 try {                    
                     await callback.apply(this, params);
                 } catch (error) {
-                    console.error(error);                
+                    console.error(error);
                     params[1].status(500).send(error);
                 }
             }
