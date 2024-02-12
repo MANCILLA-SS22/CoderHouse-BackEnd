@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import passport from "passport";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,8 +37,8 @@ function authToken(req, res, next){ //El JWT token se guarda en los headers de a
 };
 
 //LocalStorage_Cookies_PassportJWT
-async function passportCall(strategy){ // para manejo de errores
-    return async function(req, res, next){
+function passportCall(strategy){ // para manejo de errores
+    return function(req, res, next){
         console.log("Entrando a llamar strategy: ", strategy);
         passport.authenticate(strategy, function (err, user, info){
             if (err) return next(err);
@@ -50,8 +51,8 @@ async function passportCall(strategy){ // para manejo de errores
     }
 };
 
-async function authorization(role){ // para manejo de Auth
-    return async function (req, res, next){
+function authorization(role){ // para manejo de Auth
+    return function (req, res, next){
         if (!req.user) return res.status(401).send("Unauthorized: User not found in JWT")
 
         if (req.user.role !== role) {

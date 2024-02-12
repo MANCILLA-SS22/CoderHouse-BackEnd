@@ -23,7 +23,7 @@ function routerMain(app){
     app.use("/api/carts", routerCarts.getRouter());
     app.use("/api/products", routerProducts.getRouter());   
     
-    app.use("/", login.getRouter());    
+    app.use("/", login.getRouter());
     app.use("/api/auth", authController.getRouter());
     app.use("/api/sessions", sessionsController.getRouter());
 }

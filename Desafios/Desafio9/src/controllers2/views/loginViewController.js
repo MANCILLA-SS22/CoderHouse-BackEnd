@@ -26,13 +26,6 @@ function init(req, res, next){
 class LoginRegister extends Route {        
         init(){
 
-        //Metodo 2: Usando JWT por Cookie
-        this.get("/", ['PUBLIC'], init, passport.authenticate('jwt', { session: false }), async function(req, res){  //Colocamos session:false debido a que no ocupamos express-session para estos procesos.
-            console.log("Res")
-            const allProducts = await productManager.getProducts();
-            res.render('profile', {user: req.user, data: allProducts});
-        });
-
         this.get("/login", ['PUBLIC'], logger, function(req, res){
             res.render('login')
         });
@@ -58,20 +51,29 @@ class LoginRegister extends Route {
         });     
 
 
-        /* // Metodo 1: Usando Authorization Bearer Token (USAR POSTMAN O NO FUNCIONARA)
-        // this.get("/", ['PUBLIC'], authToken, function(req, res){
-        //     res.render('profile', {user: req.user});
-        // });
-
-        //Metodo 3: Usando passport-JWT por Cookie mediante customCall
-        // this.get("/", ['PUBLIC'], passportCall('jwt'), function(req, res){ 
+        // Metodo 1: Usando Authorization Bearer Token (USAR POSTMAN O NO FUNCIONARA)
+        // this.get("/", ['PUBLIC'], authToken, async function(req, res){
+        //     const allProducts = await productManager.getProducts();
         //     res.render('profile', {user: req.user, data: allProducts});
         // });
 
-        // //Metodo 4
-        // this.get("/", ['PUBLIC'], authorization('admin'), function(req, res){ 
-        //     res.render('profile', {user: req.user});
-        // });    */ 
+        //Metodo 2: Usando JWT por Cookie
+        this.get("/", ['PUBLIC'], init, passport.authenticate('jwt', { session: false }), async function(req, res){  //Colocamos session:false debido a que no ocupamos express-session para estos procesos.
+            const allProducts = await productManager.getProducts();
+            res.render('profile', {user: req.user, data: allProducts});
+        });        
+
+        // Metodo 3: Usando passport-JWT por Cookie mediante customCall
+        // this.get("/", ['PUBLIC'], passportCall('jwt'), async function(req, res){ 
+        //     const allProducts = await productManager.getProducts();
+        //     res.render('profile', {user: req.user, data: allProducts});
+        // });
+
+        // Metodo 4authorization
+        // this.get("/", ['PUBLIC'], authorization('ADMIN'), async function(req, res){ 
+        //     const allProducts = await productManager.getProducts();
+        //     res.render('profile', {user: req.user, data: allProducts});
+        // });    
     }
 }
 
