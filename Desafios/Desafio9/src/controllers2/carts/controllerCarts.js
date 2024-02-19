@@ -18,7 +18,7 @@ class CartRouter extends Route{
     init(){
         this.get("/", ['PUBLIC'], logger, async function(req, res){
             const allCarts = await CartJSON.getCart();
-            res.json(allCarts);
+            res.sendSuccess(allCarts);
         });
 
         this.post("/", ['PUBLIC'], logger, async function(request, response){ //En el endpoint POST '/' del controller cart estas creando el cart como un objeto vacío. El formato correcto debe incluir una key "products" con un array vacío.

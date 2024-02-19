@@ -1,12 +1,21 @@
 <div id="products">
 
     <header>
-        <button><a href={{ans.prevLink}}>prevLink</a></button>
-        <button><a href={{ans.nextLink}}>nextLink</a></button>
+        <button class="btn btn-dark"><a class="text-decoration-none text-light" href={{ans.prevLink}}>prevLink</a></button>
+        <button class="btn btn-dark"><a class="text-decoration-none text-light" href={{ans.nextLink}}>nextLink</a></button>
+        <button class="btn btn-dark"><a class="text-decoration-none text-light" href="/api/auth/logout"> Logout </a></button>
     </header>    
 
+        <div id="header">
+        
+        </div>
+        
+        <div id="productos">
+        
+        </div>
+
     
-    <div class="lista">
+    {{!-- <div class="lista">
         {{#each ans.payload}}
         <div class="user-info">
         <span id="userInfo">
@@ -19,5 +28,7 @@
         </span>
     </div>
         {{/each}}
-    </div>
+    </div> --}}
 </div>
+
+<script src="JS/products.js"></script>

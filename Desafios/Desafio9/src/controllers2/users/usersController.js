@@ -18,7 +18,7 @@ class AuthRouter extends Route {
             try {
                 if(!req.user) return res.status(400).json({message: "Invalid credentials"});
         
-                console.log("User found to login:", req.user);    
+                // console.log("User found to login:", req.user);    
                 const user = req.user;
         
                 //Trabajando con JWT
@@ -31,7 +31,8 @@ class AuthRouter extends Route {
         
                 const access_token = generateJWToken(tokenUser); 
                 res.cookie('jwtCookieToken', access_token, { maxAge: 60000, httpOnly: false } ) //Aqui se almacena la cookie
-                res.send({ message: "Login success!!"});
+                res.sendSuccess(req.user);
+                // res.send({ message: "Login success!!"});
         
             } catch (error) {
                 return res.status(400).send({status: "error", msg: "Usuario existente!"});

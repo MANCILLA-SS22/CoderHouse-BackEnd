@@ -1,5 +1,6 @@
 import Route from "../../router/class.routes.js"
 import {ProductManager} from "../../dao/mongoClassManager/ProductManager.js";
+import passport from "passport";
 const ProductJSON = new ProductManager();
 
 function logger(req, res, next){
@@ -13,14 +14,14 @@ function logger(req, res, next){
 
 class ProductRouter extends Route{
     init(){
-        this.get("/", ['PUBLIC'], logger, async function(req, res){
+        this.get("/", ['PUBLIC'], logger, passport.authenticate('jwt', { session: false }), async function(req, res){
             try {
-                // Copiar y pegar en barra de navegacion --> http://localhost:5500/api/products?page=1&limit=3&sort=asc&stock=1&category=New
-                const {category, stock, limit, page, sort} = req.query;
+                // Copiar y pegar en barra de navegacion --> http://localhost:5500/products?page=1&limit=3&sort=asc&stock=8&category=New
+                let {category, stock, limit, page, sort} = req.query;
+                const user = req.user
+
                 let numLimit, numPage, filter, numSort, prevSort, nextLink, prevLink;
-                let link = req.protocol+"://"+req.get("host")+'/api/products/'; //Obtenemos el link original
-                // let linkProducts = req.protocol+"://"+req.get("host")+'/products/'; //Obtenemos el link original
-                let linkProducts = '/products/'; //Obtenemos el link original (No hace falta agregar el path completo si el recurso se encuentra dentro del mismo dominio)
+                let link = req.protocol+"://"+req.get("host")+'/products/'; //Obtenemos el link original
         
                 if(category == undefined && stock == undefined){
                     filter = {};
@@ -35,20 +36,8 @@ class ProductRouter extends Route{
                     };
                 }
         
-                if (page === undefined) {
-                    numPage = 1;
-                } else {
-                    numPage = page;
-                }
-        
-                if (limit === undefined) {
-                    numLimit = 10;
-                } else {
-                    numLimit = limit;
-                }
-        
-                // page == undefined ? numPage = 1 : numPage = page;
-                // limit == undefined ? numLimit = 5 : numLimit = limit;
+                page == undefined ? numPage = 1 : numPage = page;
+                limit == undefined ? numLimit = 10 : numLimit = limit;
         
                 if(sort == "asc"){
                     prevSort = "asc";
@@ -63,12 +52,12 @@ class ProductRouter extends Route{
                 let conditionalQuery = {
                     page: numPage,
                     limit: numLimit,
-                    numSort: { /* category: numSort,  */price: numSort}
+                    numSort: {price: numSort}
                 };
         
                 const products = await ProductJSON.getProductsNew(filter, conditionalQuery); // Model.paginate([filter], [options], [callback])
-                products.hasPrevPage == false ? prevLink = null : prevLink = req.protocol+"://"+req.get("host")+'/api/products'+ "?"+ `page=${products.prevPage}`+ `&limit=${limit}&sort=${prevSort}`;
-                products.hasNextPage == false ? nextLink = null : nextLink = req.protocol+"://"+req.get("host")+'/api/products'+ "?"+ `page=${products.nextPage}`+ `&limit=${limit}&sort=${prevSort}`;
+                products.hasPrevPage == false ? prevLink = null : prevLink = link + "?"+ `page=${products.prevPage}`+ `&limit=${limit}&sort=${prevSort}`;
+                products.hasNextPage == false ? nextLink = null : nextLink = link + "?"+ `page=${products.nextPage}`+ `&limit=${limit}&sort=${prevSort}`;
         
                 let ans = {
                     status: "success",                 //success/error
@@ -81,13 +70,18 @@ class ProductRouter extends Route{
                     hasNextPage: products.hasNextPage, //Indicador para saber si la página siguiente existe.
                     prevLink: prevLink,                //Link directo a la página previa (null si hasPrevPage=false)   
                     nextLink: nextLink,                //Link directo a la página siguiente (null si hasNextPage=false)
-                    link: link,
-                    linkProducts: linkProducts
+                    user: user
+                    // link: link,
+                    // linkProducts: linkProducts,
                 };
-        
-                // res.status(200).json(res.payload); 
-                res.status(200).render('products',{ans}); 
-                // res.sendSuccess(ans)
+
+                console.log("products --> ", ans)
+
+                // console.log("ans.prevLink", ans.prevLink);
+                // console.log("ans.nextLink", ans.nextLink);
+
+                // res.status(200).render('products',{ans}); 
+                res.sendSuccess(ans)
         
         
             } catch (error) {

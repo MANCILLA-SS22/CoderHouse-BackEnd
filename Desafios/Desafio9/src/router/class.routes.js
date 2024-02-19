@@ -59,7 +59,6 @@ class CustomRouter { //Esta es la clase padre, y CustomRouter es la clase que he
     generateCustomRespones(){
         return function(req, res, next){
 
-            //Agregamos estas propiedades a cada uno de los 5 objetos, los cuales inicialmente no existen
             res.sendSuccess = function(payload){
                 res.status(200).send({status: "Success", payload})
             }

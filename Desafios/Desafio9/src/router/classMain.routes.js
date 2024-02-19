@@ -1,4 +1,3 @@
-import controllerViews from "../controllers2/views/controllerViews.js"
 import RealTimeProductsController from "../controllers2/realTimeProducts/controllerRealProducts.js";
 
 import RouterCarts from "../controllers2/carts/controllerCarts.js";
@@ -16,7 +15,6 @@ const authController = new AuthController();
 const sessionsController = new SessionsController();
 
 function routerMain(app){
-    app.use(controllerViews);
 
     app.use("/realTimeProduct", realTimeProductsController.getRouter());
     
