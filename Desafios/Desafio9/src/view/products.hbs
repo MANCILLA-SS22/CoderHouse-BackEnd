@@ -3,7 +3,7 @@
     <header>
         <button class="btn btn-dark"><a class="text-decoration-none text-light" href={{ans.prevLink}}>prevLink</a></button>
         <button class="btn btn-dark"><a class="text-decoration-none text-light" href={{ans.nextLink}}>nextLink</a></button>
-        <button class="btn btn-dark"><a class="text-decoration-none text-light" href="/api/auth/logout"> Logout </a></button>
+        <button onclick="myFunc()" class="btn btn-dark"><a class="text-decoration-none text-light" href="/api/auth/logout"> Logout </a></button>
     </header>    
 
         <div id="header">
@@ -31,4 +31,10 @@
     </div> --}}
 </div>
 
-<script src="JS/products.js"></script>
+
+<script>
+    function myFunc(){
+        alert("Has cerrado sesion")
+    }
+</script>
+<script src="/JS/products.js"></script>

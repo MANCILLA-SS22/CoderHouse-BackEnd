@@ -2,12 +2,9 @@ const productos = document.getElementById("productos");
 const header = document.getElementById("header");
 
 window.onload = function(e){
-    fetch("http://localhost:5500/api/products")
-    .then(function(response){
-        if (response.status === 200){
-            response.json().then(data => procesarDatos(data.payload))
-        }
-    })
+    fetch(`http://localhost:5500/api/products`)
+    .then(response => response.json())
+    .then(data => procesarDatos(data.payload))
     .catch(error => console.log(error));
 }
 
@@ -24,7 +21,7 @@ function procesarDatos(data){
                 <img src="${val.thumbnail[0]}" alt="img"  width="200" height="150">
                 <div class="container">
                     <button class="btn btn-dark">
-                        <a class="text-decoration-none text-light" href='/products/${val._id}'>Product details</a>
+                        <a class="text-decoration-none text-light" href='/product/${val._id}'>Product details</a>
                     </button>
                     <button class="btn btn-dark">Add to card</button>
                 </div>
