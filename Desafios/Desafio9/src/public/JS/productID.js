@@ -27,7 +27,7 @@ function procesarDatos(data){
             <p>_id: ${data._id}</p>
             <p>price: $${data.price}</p>
             <div class="container">
-                <button class="btn btn-dark"><a class="text-decoration-none text-light" href='/products'>Go to Product</a></button>
+                <button class="btn btn-dark" onclick="window.history.go(-1)">Go to Product</button>
                 <button class="btn btn-dark">Add to card</button>
             </div>
         </div>

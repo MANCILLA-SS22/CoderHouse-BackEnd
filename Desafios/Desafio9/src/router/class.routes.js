@@ -49,7 +49,7 @@ class CustomRouter { //Esta es la clase padre, y CustomRouter es la clase que he
                 console.log("user.role", user.role.toUpperCase());
                 if (user.role.toUpperCase() !== policies[0]) return res.status(403).send({ error: "Forbidden. You don`t have enough permissions" });
 
-                console.log("Usuario obtenido del strategy: ", user);
+                // console.log("Usuario obtenido del strategy: ", user);
                 req.user = user;
                 next();
             }
