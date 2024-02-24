@@ -5,7 +5,7 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./Desafios/Desafio9/src/app.js"
+    "start": "nodemon ./Entregas/TerceraEntrega/src/app.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
   "dependencies": {
     "@handlebars/allow-prototype-access": "^1.0.5",
     "bcrypt": "^5.1.1",
+    "commander": "^12.0.0",
     "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.6",
     "core-js": "^3.35.0",
@@ -46,6 +47,7 @@
     "slugify": "^1.6.6",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.3",
+    "uuid": "^9.0.1",
     "validator": "^13.11.0"
   }
 }
