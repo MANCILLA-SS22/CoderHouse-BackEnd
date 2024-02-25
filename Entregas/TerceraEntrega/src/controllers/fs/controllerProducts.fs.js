@@ -1,8 +1,8 @@
 import { Router } from "express";
-import ProductManager from "../../DAO/fsClassManager/productsManager/ProductManager.js";
+import ProductManager from "../../dao/fsClassManager/productsManager/ProductManager.js";
 
 const routerProducts = Router();
-const Product = new ProductManager("./DAO/fsClassManager/productsManager/data/products.json");
+const Product = new ProductManager("./dao/fsClassManager/productsManager/data/products.json");
 
 //https://stackoverflow.com/questions/7042340/error-cant-set-headers-after-they-are-sent-to-the-client#:~:text=The%20error%20"Error%3A%20Can%27,body%20has%20already%20been%20written.
 routerProducts.get("/", async function(request, response){

@@ -1,16 +1,15 @@
 import express from "express";
 import { Server } from "socket.io";
 import http from "http"
-import {ProductManager} from "../DAO/mongoClassManager/ProductManager.js";
-import {ChatManager} from "../DAO/mongoClassManager/ChatManager.js";
+import { productService } from "../database/service.js";
+import {ChatManager} from "../database/dao/mongo/services/chat.service.js";
 
 
 const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer);  
 
-const Product = new ProductManager(); //Persistencia de archivos: El almacenamiento persistente se refiere a la retención de datos de forma no volátil, de modo que sigan estando disponibles incluso después de que un dispositivo o aplicación se apague o reinicie
-const getProducts = Product.getProducts();
+const getProducts = productService.getProducts(); //Persistencia de archivos: El almacenamiento persistente se refiere a la retención de datos de forma no volátil, de modo que sigan estando disponibles incluso después de que un dispositivo o aplicación se apague o reinicie
 
 const Chat = new ChatManager();
 

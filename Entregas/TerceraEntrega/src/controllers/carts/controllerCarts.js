@@ -1,15 +1,12 @@
 import passport from "passport";
 import Route from "../../router/class.routes.js"
 import { v4 as uuidv4 } from "uuid";
-import {CartManager} from "../../DAO/mongoClassManager/CartManager.js";
-import {ProductManager} from "../../DAO/mongoClassManager/ProductManager.js";
-import {UserManager} from "../../DAO/mongoClassManager/UserManager.js";
-import {ticketModel} from '../../DAO/models/ticket.model.js';
 
-
-const CartJSON = new CartManager();
-const ProductJSON = new ProductManager();
-const UserJSON = new UserManager();
+import { productService } from "../../database/service.js";
+import { cartService } from "../../database/service.js";
+import { userService } from "../../database/service.js";
+import { ticketModel } from '../../database/dao/mongo/models/ticket.model.js';
+import { ProductDto } from "../../database/dto/Product.dto.js";
 
 // function logger(req, res, next){
 //     if (!req.cookies.jwtCookieToken){
@@ -26,7 +23,7 @@ class CartRouter extends Route{
     init(){
         this.get("/", ['PUBLIC'], verify, async function(req, res){
             try {
-                const allCarts = await CartJSON.getCart();
+                const allCarts = await cartService.getCart();
                 allCarts ? res.sendSuccess(allCarts) : res.sendClientError({message: "Not cars found"});
             } catch (error) {
                 res.sendServerError(`something went wrong ${error}`)
@@ -36,7 +33,7 @@ class CartRouter extends Route{
         this.post("/", ['USER'], verify, async function(req, res){ //En el endpoint POST '/' del controller cart estas creando el cart como un objeto vacío. El formato correcto debe incluir una key "products" con un array vacío.
             try {
                 const cart = {product: []}
-                const createdCart = await CartJSON.addCart(cart);
+                const createdCart = await cartService.addCart(cart);
                 res.sendSuccess(createdCart);
             } 
             catch (error) {
@@ -47,7 +44,7 @@ class CartRouter extends Route{
         this.get("/:id", ['PUBLIC'], verify, async function(req, res){
             try {
                 const {id} = req.params;
-                const getId = await CartJSON.getCartById(id);  console.log(getId);
+                const getId = await cartService.getCartById(id);  console.log(getId);
                 !getId ? res.sendClientError({message: "Cart not found"}) : res.sendSuccess(getId);
             } catch (error) {
                 res.sendServerError(`something went wrong ${error}`)
@@ -56,15 +53,15 @@ class CartRouter extends Route{
 
         this.get("/:cid/purchase/:uid/user", ['USER'], verify, async function(req, res){
             const {cid, uid} = req.params;
-            const cart = await CartJSON.getCartById(cid); //Filtramos el carrito con los productos dentro de el
+            const cart = await cartService.getCartById(cid); //Filtramos el carrito con los productos dentro de el
             const products = cart.products; //Almacenamos los productos pertenecientes al carrito (estos productos vienen en formato array)
             const purchaseAvailable = products.filter(event => event.product.stock !== 0);   //Filtramos los productos con un valor diferente de 0 en stock
             const purchaseUnavailable = products.filter(event => event.product.stock < event.quantity); //Filtramos los productos del carrito que tengan un valor mayor al del stock
 
             purchaseAvailable.forEach(async function(event){
-                const productsToSell = await ProductJSON.updateProductgetProductById(event.product._id);
+                const productsToSell = await productService.updateProductgetProductById(event.product._id);
                 productsToSell.stock =- event.quantity;
-                await ProductJSON.updateProduct({_id: event.product._id}, productsToSell);
+                await productService.updateProduct({_id: event.product._id}, productsToSell);
             });
 
             const ticket = {
@@ -75,8 +72,8 @@ class CartRouter extends Route{
             };
 
             const newTicket = await ticketModel.create(ticket);
-            if(newTicket) await CartJSON.updateOneCart(cid, purchaseUnavailable); //Mantenemos en el carrito los productos no comprados por falta de stock
-            await UserJSON.updateUser(uid, {cart: purchaseAvailable}); //Almacenamos el carrito en el usuario actual
+            if(newTicket) await cartService.updateOneCart(cid, purchaseUnavailable); //Mantenemos en el carrito los productos no comprados por falta de stock
+            await userService.updateUser(uid, {cart: purchaseAvailable}); //Almacenamos el carrito en el usuario actual
 
             res.sendSuccess(newTicket);
         });
@@ -85,8 +82,8 @@ class CartRouter extends Route{
             try {
                 const {cid} = req.params;
                 const {pid} = req.params;
-                const getCartId = await CartJSON.getCartById(cid);
-                const getProductId = await ProductJSON.getProductById(pid);
+                const getCartId = await cartService.getCartById(cid);
+                const getProductId = await productService.getProductById(pid);
                 let cartIdProducts = getCartId?.products;
             
                 if (!getCartId){
@@ -103,13 +100,13 @@ class CartRouter extends Route{
                             }
                             // cartIdProducts.push(getProductId, newObject);
                             cartIdProducts.push(newObject);
-                            const updateCartProducts = await CartJSON.updateCartProductsId(cid, cartIdProducts);
+                            const updateCartProducts = await cartService.updateCartProductsId(cid, cartIdProducts);
                             res.sendSuccess(updateCartProducts);
                         }else{
                             const productsArrayPosition = cartIdProducts.findIndex(event => event.product._id.toString() === pid);
                             cartIdProducts[productsArrayPosition].quantity += 1;
             
-                            const updateCartProducts = await CartJSON.updateCartProductsId(cid, cartIdProducts);
+                            const updateCartProducts = await cartService.updateCartProductsId(cid, cartIdProducts);
                             res.sendSuccess(updateCartProducts);
                         }
                     }
@@ -123,14 +120,14 @@ class CartRouter extends Route{
             try {
                 const {cid} = requset.params;
                 const {pid} = requset.params;
-                const getCartId = await CartJSON.getCartById(cid);
+                const getCartId = await cartService.getCartById(cid);
                 const verify = getCartId.products.find(event => event.product._id.toString() === pid);
             
                 if(verify){
                     const productPosition = getCartId.products.findIndex(event => event.product._id.toString() === pid); //Buscamos la posicion del producto a eliminar
                     getCartId.products.splice(productPosition, 1) //Una vez encontrado, eliminamos el producto (con la posicion obtenida)
                     const newArray = getCartId.products;
-                    const deleteProduct = await CartJSON.deleteProductInCarById(cid, newArray);
+                    const deleteProduct = await cartService.deleteProductInCarById(cid, newArray);
                     res.sendSuccess(deleteProduct);
             
                 }else{
@@ -143,9 +140,9 @@ class CartRouter extends Route{
 
         this.put("/:cid", ['PUBLIC'], verify, async function(req, res){ //  deberá actualizar el carrito con un arreglo de productos con el formato especificado arriba.
             try {
-                const {products} = req.body;
+                const productDto = new ProductDto(req.body);
                 const {cid} = req.params;
-                const getCartId = await CartJSON.updateOneCart(cid, products);
+                const getCartId = await cartService.updateOneCart(cid, productDto);
                 res.sendSuccess(getCartId);
             } catch (error) {
                 res.sendServerError(`something went wrong ${error}`)
@@ -160,20 +157,20 @@ class CartRouter extends Route{
                 
                 if (typeof quantity !== "number") return res.sendClientError({messaje: "Error"});
                 
-                const getCartId = await CartJSON.getCartById(cid);
+                const getCartId = await cartService.getCartById(cid);
                 const verify = getCartId.products.find(event => event.product._id.toString() === pid);
                 
                 if(verify){
-                    let updateNumberOfProducts = await CartJSON.finder(cid);
+                    let updateNumberOfProducts = await cartService.finder(cid);
                     const arrayPosition = updateNumberOfProducts.products.findIndex(event => event.product._id.toString() === pid);
                     updateNumberOfProducts.products[arrayPosition].quantity = quantity;
-                    const ans = await CartJSON.updateCartByProductsId(cid, updateNumberOfProducts);
+                    const ans = await cartService.updateCartByProductsId(cid, updateNumberOfProducts);
                     console.log("ans", ans)
                     res.sendSuccess(ans);
                 }else{
-                    let updateNumberOfProducts = await CartJSON.finder(cid);
+                    let updateNumberOfProducts = await cartService.finder(cid);
                     updateNumberOfProducts.products.push({product: pid, quantity: quantity});
-                    const ans = await CartJSON.updateCartByProductsId(cid, updateNumberOfProducts);
+                    const ans = await cartService.updateCartByProductsId(cid, updateNumberOfProducts);
                     console.log("ans", ans)
                     res.sendSuccess(ans);
                 }
@@ -185,7 +182,7 @@ class CartRouter extends Route{
         this.delete("/:cid", ['PUBLIC'], verify, async function(requset, res){ //deberá eliminar todos los productos del carrito
             try {
                 const {cid} = requset.params;
-                const deleteProduct = await CartJSON.deleteProductsById(cid);
+                const deleteProduct = await cartService.deleteProductsById(cid);
                 res.sendSuccess(deleteProduct);
             } catch (error) {
                 res.sendServerError(`something went wrong ${error}`)

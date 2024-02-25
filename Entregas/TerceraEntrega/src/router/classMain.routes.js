@@ -15,7 +15,6 @@ const authController = new AuthController();
 const sessionsController = new SessionsController();
 
 function routerMain(app){
-
     app.use("/realTimeProduct", realTimeProductsController.getRouter());
     
     app.use("/api/carts", routerCarts.getRouter());

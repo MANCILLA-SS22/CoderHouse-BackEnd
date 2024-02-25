@@ -5,9 +5,9 @@ import jwtStrategy from 'passport-jwt';
 import GitHubStrategy from "passport-github"
 
 import { validateHash, createHash } from "../utils.js"
-import { UserManager } from "../DAO/mongoClassManager/UserManager.js";
+import { userService } from "../database/service.js";
+import { UserDto } from "../database/dto/User.dto.js";
 
-const userManager = new UserManager();
 const localStrategy = passportLocal.Strategy; //Declaramos estrategia
 const JwtStrategy = jwtStrategy.Strategy;
 const ExtractJWT = jwtStrategy.ExtractJwt;
@@ -40,24 +40,26 @@ async function jwt(jwt_payload, done){
 }
 
 async function register(req, username, password, done){
-    const { first_name, last_name, email, age, role } = req.body;
+    const userDto = new UserDto(req.body);
     try {
-        const exist  = await userManager.findUser({email}); //Validamos si el usuario existe en la base de datos
+        const exist  = await userService.findUser({userDto}); //Validamos si el usuario existe en la base de datos
         if(exist){
             console.log("El usuario ya existe!")
             done(null, false); //Como el usuario ya existe (no es un error), no se va a registrar. El segundo parametro es falso porque no se retornara ningun usuario porque ya existe
         }
 
         const user = {
-            first_name: first_name,
-            last_name: last_name,
-            email: email,
-            age: age,
-            password: createHash(password),
-            role: role
+            first_name: userDto.first_name,
+            last_name: userDto.last_name,
+            email: userDto.email,
+            age: userDto.age,
+            password: createHash(userDto.password),
+            cart: userDto.cart,
+            role: userDto.role
         }
 
-        const result = await userManager.createUser(user);
+        const result = await userService.createUser(user);
+        console.log(result)
         return done(null, result) //El primer parametro es null porque no se genera un error, sino que se genera de forma correcta.
 
     } catch (error) {
@@ -67,7 +69,7 @@ async function register(req, username, password, done){
 
 async function login(req, username, password, done){
     try {
-        const user = await userManager.findUser({ email: username });
+        const user = await userService.findUser({ email: username });
         if (!user) return done(null, false);
         if (!validateHash(user, password)) return done(null, false);
         return done(null, user);
@@ -79,7 +81,7 @@ async function login(req, username, password, done){
 async function github(accessToken, refreshToken, profile, done){
     console.log("Profile obtenido del usuario de Github", profile);
     try {
-        const user = await userManager.findUser({email: profile._json.email});    console.log("Usuario encontrado para login: ", user);
+        const user = await userService.findUser({email: profile._json.email});    console.log("Usuario encontrado para login: ", user);
         if(!user){ //Al no existir el usuario, lo agregamos a la base de datos
             console.warn("User doesn't exists with username: " + profile._json.email);
             let newUser = {
@@ -91,7 +93,7 @@ async function github(accessToken, refreshToken, profile, done){
                 loggedBy: "GitHub"
             };
             
-            const result = await userManager.createUser(newUser);
+            const result = await userService.createUser(newUser);
             return done(null, result);
         }else{
             return done(null, user); // Si entramos por aca significa que el user ya existe en la DB
@@ -117,7 +119,7 @@ function serialize(user, done){
     
 async function deserialize(id, done){
     try {
-        let user = await userManager.findById(id);
+        let user = await userService.findById(id);
         done(null, user);
 
     } catch (error) {

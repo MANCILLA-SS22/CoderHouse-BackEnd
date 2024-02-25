@@ -1,7 +1,9 @@
-import Route from "../../router/class.routes.js"
-import {ProductManager} from "../../DAO/mongoClassManager/ProductManager.js";
 import passport from "passport";
-const ProductJSON = new ProductManager();
+import Route from "../../router/class.routes.js"
+
+// import { productService } from "../../database/factory.js";
+import { productService } from "../../database/service.js";
+import { ProductDto } from "../../database/dto/Product.dto.js";
 
 class ProductRouter extends Route{
     init(){
@@ -59,7 +61,7 @@ class ProductRouter extends Route{
                     numSort: {price: numSort}
                 };
         
-                const products = await ProductJSON.getProductsNew(filter, conditionalQuery); // Model.paginate([filter], [options], [callback])
+                const products = await productService.getProductsNew(filter, conditionalQuery); // Model.paginate([filter], [options], [callback])
                 products.hasPrevPage === false ? prevLink = null : prevLink = link + "?"+ `page=${products.prevPage}`+ `&limit=${numLimit}&sort=${prevSort}$`;
                 products.hasNextPage === false ? nextLink = null : nextLink = link + "?"+ `page=${products.nextPage}`+ `&limit=${numLimit}&sort=${prevSort}$`;
 
@@ -94,7 +96,7 @@ class ProductRouter extends Route{
         this.get("/:pid", ['PUBLIC'], async function(req, res){
             try {
                 const {pid} = req.params;
-                const getById = await ProductJSON.getProductById(pid);
+                const getById = await productService.getProductById(pid);
                 getById ? res.sendSuccess(getById) : res.sendClientError({message: "Not product found by ID"})
             } catch (error) {
                 res.sendServerError(`something went wrong ${error}`);
@@ -104,13 +106,12 @@ class ProductRouter extends Route{
         
         this.post("/", ['ADMIN'], async function(req, res){
             try {
-                const {title, description, price, thumbnail, code, stock, status, category} = req.body;
-                const nuevoProducto = {title, description, price, thumbnail, code, stock, status, category}
+                const productDto = new ProductDto(req.body);
             
                 // const verifyExistenceUndefined = Object.values(nuevoProducto).indexOf(undefined);
-                const parametersExist = nuevoProducto.hasOwnProperty("title") && nuevoProducto.hasOwnProperty("description") && nuevoProducto.hasOwnProperty("price") && nuevoProducto.hasOwnProperty("thumbnail") && nuevoProducto.hasOwnProperty("code") && nuevoProducto.hasOwnProperty("stock") && nuevoProducto.hasOwnProperty("status") && nuevoProducto.hasOwnProperty("category");
+                const parametersExist = productDto.hasOwnProperty("title") && productDto.hasOwnProperty("description") && productDto.hasOwnProperty("price") && productDto.hasOwnProperty("thumbnail") && productDto.hasOwnProperty("code") && productDto.hasOwnProperty("stock") && productDto.hasOwnProperty("status") && productDto.hasOwnProperty("category");
                 if (parametersExist) {
-                    const crearProducto = await ProductJSON.addProduct(nuevoProducto);
+                    const crearProducto = await productService.addProduct(productDto);
 
                     if(crearProducto?.error) {
                         res.status(409).json({error: crearProducto.error})
@@ -129,16 +130,15 @@ class ProductRouter extends Route{
         this.put("/:pid", ['ADMIN'], async function(req, res){
             try {
                 const {pid} = req.params;
-                const {title, description, price, thumbnail, code, stock, status, category} = req.body;
-                const nuevoProducto = {title, description, price, thumbnail, code, stock, status, category}
+                const productDto = new ProductDto(req.body);
             
-                const verificarId = ProductJSON.getProductById(pid);
+                const verificarId = productService.getProductById(pid);
                 if(!verificarId){
                     res.sendClientError({message: "Not found id."});
                 }else{
-                    const verifyExistenceUndefined = Object.values(nuevoProducto).indexOf(undefined);
+                    const verifyExistenceUndefined = Object.values(productDto).indexOf(undefined);
                     if (verifyExistenceUndefined == -1) {
-                        const actualizarProducto = await ProductJSON.updateProduct(pid, nuevoProducto);
+                        const actualizarProducto = await productService.updateProduct(pid, productDto);
                         res.sendSuccess(actualizarProducto);
                     }else{
                         res.sendClientError({message: "Not enough information."});
@@ -152,11 +152,11 @@ class ProductRouter extends Route{
         this.delete("/:id", ['ADMIN'], async function(req, res){
             try {
                 const {id} = req.params;
-                const verificarId = await ProductJSON.getProductById(id);
+                const verificarId = await productService.getProductById(id);
                 if(!verificarId){
                     res.sendClientError({message: "Not found id."});
                 }else{
-                    const eliminarProducto = await ProductJSON.deleteProduct(id);
+                    const eliminarProducto = await productService.deleteProduct(id);
                     res.sendSuccess(eliminarProducto);
                 }
             } catch (error) {

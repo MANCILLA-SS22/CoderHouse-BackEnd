@@ -1,7 +1,6 @@
 import {cartModel} from "../models/carts.model.js";
 
-export class CartManager{
-
+class CartServiceMongo{
     async getCart(){
         try {
             return await cartModel.find();
@@ -88,5 +87,6 @@ export class CartManager{
             return error
         }
     }
-}
+};
 
+export {CartServiceMongo};
